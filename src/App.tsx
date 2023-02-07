@@ -1,24 +1,18 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import Header from "./Components/Header/Header";
+import TopMenu from "./Components/Header/TopMenu/TopMenu";
+import styles from "./App.module.css";
+import MainContainer from "./Components/MainContainer/MainContainer";
+import { Button } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Header />
+      <TopMenu />
+      <div className={styles.container}>
+        <MainContainer />
+      </div>
     </div>
   );
 }

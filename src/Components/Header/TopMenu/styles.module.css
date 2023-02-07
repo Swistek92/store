@@ -1,0 +1,61 @@
+.list {
+  display: flex;
+}
+.list li {
+  margin: 0px 20px;
+  list-style: none;
+}
+.list li:hover {
+  /* background-color: #33333335; */
+  transform: scale(1.1);
+  transition: all 1s ease;
+}
+
+.list li:hover a {
+  -webkit-transform: scale(1);
+  transform: scale(1);
+}
+
+.list a {
+  color: #fff;
+  text-decoration: none;
+  display: block;
+  position: relative;
+}
+
+/* text-decoration: underline red; */
+
+.list a::after {
+  position: absolute;
+  background-color: red;
+  content: "";
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 3px;
+  transform: scale(0);
+  transition: all 1s ease;
+}
+.list a:hover::after {
+  transform: scale(1);
+}
+
+.header {
+  /* height: 1rem; */
+  background-color: #333333a3;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  width: 100vw;
+  height: 2rem;
+  top: 3.5rem;
+  z-index: 999999999;
+}
+
+@media (max-width: 500px) {
+  /* … */
+  .list li {
+    font-size: 80%;
+    margin: 2px 5px;
+  }
+}

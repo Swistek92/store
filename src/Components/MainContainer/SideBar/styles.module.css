@@ -1,0 +1,29 @@
+.list {
+  font-size: 10px;
+}
+
+.header {
+  font-size: 18px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 500px) {
+  /* … */
+  .list {
+    font-size: 15px;
+  }
+}
+
+.accordion {
+  background-color: rgba(250, 235, 215, 0.187) !important;
+}
+
+.accordion button {
+  background-color: rgba(250, 235, 215, 0.187) !important;
+}
+.accordion li {
+  background-color: rgba(250, 235, 215, 0.187) !important;
+}
