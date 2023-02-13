@@ -13,5 +13,9 @@ body {
   font-family: Arial, sans-serif;
   font-size: 15px;
   color: #000;
-  background-color: #33333332;
+  background-color: rgba(250, 235, 215, 0.43);
+}
+
+html {
+  background-color: rgba(250, 235, 215, 0.43);
 }

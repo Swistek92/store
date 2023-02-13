@@ -1,5 +1,5 @@
 import React from "react";
-import Product from "./Product/Product";
+import Main from "./Main/Main";
 import SideBar from "./SideBar/SideBar";
 import styles from "./styles.module.css";
 
@@ -10,7 +10,7 @@ const MainContainer = () => {
         <SideBar />
       </div>
       <div className={styles.col2}>
-        <Product />
+        <Main />
       </div>
     </div>
   );

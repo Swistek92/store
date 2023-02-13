@@ -1,8 +1,11 @@
 import React from "react";
 import styles from "./styles.module.css";
-import { menu } from "../../../const";
+// import { Menu } from "../../../const";
+import { useAppSelector } from "../../../store/store";
 
 const TopMenu = () => {
+  const menu = useAppSelector((state) => state.menu);
+  console.log(menu);
   return (
     <header className={styles.header}>
       <div className={styles.container}>

@@ -12,6 +12,7 @@
   /* width: 30%; */
   position: relative;
   min-width: 30%;
+  margin: 20px;
 }
 .card .arrow {
   position: absolute;

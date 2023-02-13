@@ -1,29 +1,27 @@
 import React from "react";
 import { FaArrowRight, FaStarOfDavid } from "react-icons/fa";
+import { useAppSelector } from "../../../store/store";
 import styles from "./styles.module.css";
-const products = [
-  require("../../../assets/img/shop-1.jpg"),
-  require("../../../assets/img/shop-2.jpg"),
-  require("../../../assets/img/shop-3.jpg"),
-  require("../../../assets/img/shop-4.jpg"),
-  require("../../../assets/img/shop-5.jpg"),
-  require("../../../assets/img/shop-6.jpg"),
-  require("../../../assets/img/shop-7.jpg"),
-  require("../../../assets/img/shop-8.jpg"),
-  require("../../../assets/img/shop-9.jpg"),
-];
-const Product = () => {
+
+// const product = ;require("../../../assets/img/shop-1.jpg")
+
+const Main = () => {
+  const { products } = useAppSelector((state) => state.product);
+  console.log(products);
   return (
     <div className={styles.container}>
-      {products.map((item) => {
+      {products.map((e, i) => {
         return (
-          <div className={styles.card}>
+          <div key={e.id} className={styles.card}>
             <div>
-              <img alt='a' src={item} />
+              <img
+                alt='a'
+                src={require(`../../../assets/img/shop-${i + 1}.jpg`)}
+              />
               <FaArrowRight className={styles.arrow} />
               <div>
                 <h6>
-                  <a href='#'>furry hooded</a>
+                  <a href='#'>{e.name}</a>
                 </h6>
                 <div className='rating'>
                   <FaStarOfDavid style={{ color: "yellow" }} />
@@ -32,11 +30,11 @@ const Product = () => {
                   <FaStarOfDavid style={{ color: "yellow" }} />
                 </div>
                 <div className={styles.price}>
-                  <span>$590</span>
+                  <span>${e.price}</span>
                 </div>
               </div>
             </div>
-            <h5>Prettty jacketss</h5>
+            {/* <h5>Prettty jacketss</h5> */}
           </div>
         );
       })}
@@ -44,4 +42,4 @@ const Product = () => {
   );
 };
 
-export default Product;
+export default Main;
