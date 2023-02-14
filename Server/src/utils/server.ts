@@ -1,11 +1,11 @@
 import express, { Express } from "express";
-import ProductRoutes from "../Routes/product";
+import CategoryRoutes from "../Routes/category.routes";
 function createServer() {
   const app: Express = express();
   //body parser
   app.use(express.json());
 
-  ProductRoutes(app);
+  CategoryRoutes(app);
 
   return app;
 }
