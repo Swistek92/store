@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
-  port: 3000,
+  port: 3001,
   saltWorkFactor: 10,
   acessTokenTtl: "15m",
   refreshTokenTtl: "1y",

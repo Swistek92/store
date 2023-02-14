@@ -1,17 +1,14 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import axios from "axios";
 import { StringMappingType } from "typescript";
 
 // export type MenuType = string[];
 
-interface SubCategory {
-  id: number;
-  name: string;
-}
-
 interface Category {
-  id: number;
-  category: string;
-  subCategory: SubCategory[];
+  _id: number;
+  name: string;
+  nestedCategories: string[];
+  active: boolean;
 }
 
 interface Product {
@@ -48,70 +45,42 @@ const initProcuts: Product[] = [
   },
 ];
 
-const initCategories: Category[] = [
-  {
-    id: 1,
-    category: "Kids",
-    subCategory: [
-      {
-        id: 1,
-        name: "Dresses",
-      },
-      {
-        id: 2,
-        name: "Jacket",
-      },
-    ],
-  },
-  {
-    id: 2,
-    category: "Man",
-    subCategory: [
-      {
-        id: 1,
-        name: "Tshirt",
-      },
-      {
-        id: 2,
-        name: "Jacket",
-      },
-    ],
-  },
-];
+const initCategories: Category[] = [];
 
 const initialState = {
   categories: initCategories,
   products: initProcuts,
 };
 
-// export const getProductCategories = createAsyncThunk(
-//   "person/fetch",
-//   async (thunkAPI) => {
-//     try {
-//       const response = await fetch("http://localhost:8000/person", {
-//         method: "GET",
-//       });
-//       const data = response.json();
-//       return data;
-//     } catch (error) {
-//       return error;
-//     }
-//   }
-// );
+export const fetchProductCategories = createAsyncThunk(
+  "person/fetch",
+  async (thunkAPI) => {
+    try {
+      const response = await axios.get("http://localhost:3001/api/category/");
+      return response.data;
+    } catch (error) {
+      return error;
+    }
+  }
+);
 
 export const ProductSlice = createSlice({
   name: "ProductCategory",
   initialState,
   reducers: {
     productCategory: (state, action) => {
-      state.products = action.payload;
+      state.categories = action.payload;
     },
   },
-  // extraReducers: (builder) => {
-  //   builder.addCase(getProductCategories.fulfilled, (state, action) => {
-  //     state.categories = action.payload;
-  //   });
-  // },
+  extraReducers: (builder) => {
+    builder.addCase(fetchProductCategories.fulfilled, (state, action) => {
+      console.log(action);
+      state.categories = action.payload;
+    });
+    builder.addCase(fetchProductCategories.rejected, (state, action) => {
+      console.log(action);
+    });
+  },
 });
 
 export const { productCategory } = ProductSlice.actions;

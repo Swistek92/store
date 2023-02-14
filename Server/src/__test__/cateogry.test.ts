@@ -12,6 +12,12 @@ const category = {
   nestedCategories: ["T-shirt", "Jacket"],
   description: "Discover the latest trends in men's fashion and style. ",
 };
+const FailRequestcategory = {
+  // name: "Mqq111qqn",
+  active: true,
+  nestedCategories: ["T-shirt", "Jacket"],
+  description: "Discover the latest trends in men's fashion and style. ",
+};
 
 describe("category", () => {
   beforeAll(async () => {
@@ -25,7 +31,7 @@ describe("category", () => {
   });
 
   describe("create", () => {
-    it.only("should return 201 and category for correct data", async () => {
+    it("should return 201 and category for correct data", async () => {
       const { statusCode, body } = await supertest(app)
         .post("/api/category/")
         .send(category);
@@ -37,8 +43,22 @@ describe("category", () => {
         _id: expect.any(String),
       });
     });
-    it("should return 404 if we dont provide a name", () => {});
-    it("should return 409 for duplicate name", () => {});
+    it("should return 400 if we dont provide a name", async () => {
+      const { statusCode, body } = await supertest(app)
+        .post("/api/category/")
+        .send(FailRequestcategory);
+
+      expect(statusCode).toBe(400);
+    });
+    it("should return 409 for duplicate name", async () => {
+      await supertest(app).post("/api/category/").send(category);
+
+      const { statusCode } = await supertest(app)
+        .post("/api/category/")
+        .send(category);
+
+      expect(statusCode).toBe(409);
+    });
   });
 
   describe("update", () => {

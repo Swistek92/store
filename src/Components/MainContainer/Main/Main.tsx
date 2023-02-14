@@ -7,7 +7,7 @@ import styles from "./styles.module.css";
 
 const Main = () => {
   const { products } = useAppSelector((state) => state.product);
-  console.log(products);
+  // console.log(products);
   return (
     <div className={styles.container}>
       {products.map((e, i) => {

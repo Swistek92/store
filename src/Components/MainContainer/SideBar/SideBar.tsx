@@ -5,8 +5,6 @@ import { useAppDispatch, useAppSelector } from "../../../store/store";
 import styles from "./styles.module.css";
 const SideBar = () => {
   const { categories } = useAppSelector((state) => state.product);
-  console.log(categories);
-
   return (
     <div className={`${styles.container} `}>
       <h3 className={styles.header}>Categories</h3>
@@ -18,17 +16,17 @@ const SideBar = () => {
         {categories.map((e, i) => {
           return (
             <Accordion.Item
-              key={e.id}
+              key={e.name}
               className={styles.accordion}
               eventKey={`${i}`}
             >
-              <Accordion.Header>{e.category}</Accordion.Header>
+              <Accordion.Header>{e.name}</Accordion.Header>
               <Accordion.Body>
                 <ListGroup className={styles.list} as='ol' numbered>
-                  {e.subCategory.map((e) => {
+                  {e.nestedCategories!.map((e) => {
                     return (
-                      <ListGroup.Item key={e.id} as='li'>
-                        {e.name}
+                      <ListGroup.Item key={e} as='li'>
+                        {e}
                       </ListGroup.Item>
                     );
                   })}

@@ -1,7 +1,10 @@
 import { createCategorySchema } from "../schema/category.schema";
 import { Express } from "express";
 import validateResource from "../middleware/validateResource";
-import { addCategoryHandler } from "../controller/category.controller";
+import {
+  addCategoryHandler,
+  getAllCategoryHandler,
+} from "../controller/category.controller";
 
 const CategoryRoutes = (app: Express) => {
   app.post(
@@ -9,6 +12,8 @@ const CategoryRoutes = (app: Express) => {
     validateResource(createCategorySchema),
     addCategoryHandler
   );
+
+  app.get("/api/category", getAllCategoryHandler);
 };
 
 export default CategoryRoutes;

@@ -5,7 +5,6 @@ import { useAppSelector } from "../../../store/store";
 
 const TopMenu = () => {
   const menu = useAppSelector((state) => state.menu);
-  console.log(menu);
   return (
     <header className={styles.header}>
       <div className={styles.container}>
