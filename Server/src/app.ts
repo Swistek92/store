@@ -1,3 +1,4 @@
+import cors from "cors";
 /* eslint-disable import/first */
 import * as dotenv from "dotenv";
 dotenv.config();
@@ -10,6 +11,7 @@ const port = config.get<number>("port");
 
 const app = createServer();
 
+app.use(cors);
 app.listen(port, async () => {
   logger.info(`listen http://localhost:${port}/ ons port ${port}`);
   await connect();

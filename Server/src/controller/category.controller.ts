@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { addCategory } from "../service/category.service";
+import logger from "../utils/logger";
 
 export async function addCategoryHandler(req: Request, res: Response) {
   try {
