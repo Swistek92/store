@@ -8,6 +8,22 @@ const payload = {
   }),
 };
 
+const params = {
+  params: object({
+    id: string({
+      required_error: "categoryId is required",
+    }),
+  }),
+};
+
 export const createCategorySchema = object({
   ...payload,
 });
+
+export const updateCategorySchema = object({
+  ...payload,
+  ...params,
+});
+
+export type createCategoryInput = TypeOf<typeof createCategorySchema>;
+export type updateCategoryInput = TypeOf<typeof updateCategorySchema>;

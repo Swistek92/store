@@ -1,5 +1,5 @@
 import cors from "cors";
-import express, { Express } from "express";
+import express, { Express, NextFunction, Request, Response } from "express";
 import CategoryRoutes from "../Routes/category.routes";
 function createServer() {
   const app: Express = express();

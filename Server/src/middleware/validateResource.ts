@@ -1,5 +1,7 @@
+import { SerializeResponse } from "./../utils/http";
 import { Request, Response, NextFunction } from "express";
 import { AnyZodObject } from "zod";
+import logger from "../utils/logger";
 const validateResource =
   (schema: AnyZodObject) =>
   (req: Request, res: Response, next: NextFunction) => {
@@ -10,8 +12,10 @@ const validateResource =
         params: req.params,
       });
       next();
-    } catch (error: any) {
-      return res.status(400).send(error);
+    } catch (error) {
+      return res
+        .status(400)
+        .json(new SerializeResponse(400, "Error", "Invalid_Type", error));
     }
   };
 
