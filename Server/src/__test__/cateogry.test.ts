@@ -110,7 +110,35 @@ describe("category", () => {
   });
 
   describe("delete", () => {
-    it("should return 404 if category does exist", () => {});
-    it("should return 200 if category are deleted", () => {});
+    beforeAll(() => {
+      CategoryModel.collection.drop();
+    });
+    it("should return 422 if category does exist", async () => {
+      const { statusCode } = await supertest(app)
+        .delete(`/api/category/63ead48efa236fee4f6fd92e`)
+        .send(category);
+
+      expect(statusCode).toBe(422);
+    });
+    it("should retrun 404 if we send request with invalid mongoose iD", async () => {
+      const { statusCode } = await supertest(app)
+        .delete(`/api/category/123123213`)
+        .send(category);
+
+      expect(statusCode).toBe(404);
+    });
+    it("should return 204 if category are deleted", async () => {
+      const createdCategory = await supertest(app)
+        .post("/api/category/")
+        .send(category);
+
+      expect(createdCategory.statusCode).toBe(201);
+
+      const { statusCode } = await supertest(app).delete(
+        `/api/category/${createdCategory.body.data._id}`
+      );
+
+      expect(statusCode).toBe(204);
+    });
   });
 });

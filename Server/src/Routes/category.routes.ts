@@ -1,11 +1,13 @@
 import {
   createCategorySchema,
+  deleteCategorySchema,
   updateCategorySchema,
 } from "../schema/category.schema";
 import { Express } from "express";
 import validateResource from "../middleware/validateResource";
 import {
   addCategoryHandler,
+  deleteCategoryHandler,
   getAllCategoryHandler,
   updateCategoryHandler,
 } from "../controller/category.controller";
@@ -29,6 +31,16 @@ const CategoryRoutes = (app: Express) => {
       validateCategoryIsExist,
     ],
     updateCategoryHandler
+  );
+
+  app.delete(
+    "/api/category/:id",
+    [
+      validateResource(deleteCategorySchema),
+      validateMongoIdInParams,
+      validateCategoryIsExist,
+    ],
+    deleteCategoryHandler
   );
 };
 

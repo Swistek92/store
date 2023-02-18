@@ -20,10 +20,15 @@ export const createCategorySchema = object({
   ...payload,
 });
 
+export const deleteCategorySchema = object({
+  ...params,
+});
+
 export const updateCategorySchema = object({
   ...payload,
   ...params,
 });
 
 export type createCategoryInput = TypeOf<typeof createCategorySchema>;
+export type deleteCategoryInput = TypeOf<typeof deleteCategorySchema>;
 export type updateCategoryInput = TypeOf<typeof updateCategorySchema>;

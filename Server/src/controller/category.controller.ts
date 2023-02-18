@@ -15,10 +15,8 @@ export async function deleteCategoryHandler(
   res: Response,
   next: NextFunction
 ) {
-  // await validateExistCategory(req.body.name, res);
-
   try {
-    const deletedCategory = await deleteCategory({ name: req.query.name });
+    const deletedCategory = await deleteCategory({ _id: req.params.id });
     res
       .status(204)
       .json(

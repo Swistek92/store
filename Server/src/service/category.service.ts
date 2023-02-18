@@ -9,19 +9,8 @@ export async function getAllCategory() {
   return CategoryModel.find();
 }
 
-interface findQuery {
-  _id?: any;
-  name?: string;
-}
-
-export async function findCategory({ _id, name }: findQuery) {
-  if (_id) {
-    return CategoryModel.findOne({ _id: String(_id) });
-  } else if (name) {
-    return CategoryModel.findOne({ name: String(name) });
-  } else {
-    throw new Error("query is required");
-  }
+export async function findCategory(query: FilterQuery<CategoryDocument>) {
+  return CategoryModel.findOne(query);
 }
 
 export async function findAndUpdateCategory(
