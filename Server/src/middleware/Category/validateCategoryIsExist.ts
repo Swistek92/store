@@ -1,8 +1,8 @@
 import { isValidObjectId } from "mongoose";
-import { unhandleError } from "../utils/http";
-import { SerializeResponse } from "../utils/http";
+import { unhandleError } from "../../utils/http";
+import { SerializeResponse } from "../../utils/http";
 import { Request, Response, NextFunction } from "express";
-import { findCategory } from "../service/category.service";
+import { findCategory } from "../../service/category.service";
 
 const validateCategoryIsExist = async (
   req: Request,

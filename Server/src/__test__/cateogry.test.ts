@@ -100,7 +100,6 @@ describe("category", () => {
     });
 
     it("throw 422 if category with this id do not exist", async () => {
-      // 63ead48efa236fee4f6fd92e
       const { statusCode } = await supertest(app)
         .put(`/api/category/63ead48efa236fee4f6fd92e`)
         .send(category);

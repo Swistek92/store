@@ -1,14 +1,11 @@
-import { CategoryDocument } from "./../models/category.model";
 import { NextFunction, Request, Response } from "express";
 import {
   addCategory,
   deleteCategory,
   findAndUpdateCategory,
-  findCategory,
   getAllCategory,
 } from "../service/category.service";
 import { SerializeResponse, unhandleError } from "../utils/http";
-import logger from "../utils/logger";
 
 export async function deleteCategoryHandler(
   req: Request,
@@ -25,10 +22,6 @@ export async function deleteCategoryHandler(
   } catch (error) {
     unhandleError(error, res);
   }
-}
-interface updateBody {
-  oldName: string;
-  newObj: Object;
 }
 
 export async function updateCategoryHandler(
@@ -61,16 +54,6 @@ export async function addCategoryHandler(
   res: Response,
   next: NextFunction
 ) {
-  const isDuplicated = await findCategory({ name: req.body.name });
-
-  if (isDuplicated) {
-    return res
-      .status(409)
-      .json(
-        new SerializeResponse(409, "Error", "name is allready exist in db")
-      );
-  }
-
   try {
     const newCategory = await addCategory(req.body);
     return res

@@ -12,12 +12,13 @@ import {
   updateCategoryHandler,
 } from "../controller/category.controller";
 import validateMongoIdInParams from "../middleware/validateMongoIdInParams";
-import validateCategoryIsExist from "../middleware/validateCategoryIsExist";
+import validateCategoryIsExist from "../middleware/Category/validateCategoryIsExist";
+import validateCategoryNameNoExist from "../middleware/Category/validateCategoryNameNoExist";
 
 const CategoryRoutes = (app: Express) => {
   app.post(
     "/api/category/",
-    validateResource(createCategorySchema),
+    [validateResource(createCategorySchema), validateCategoryNameNoExist],
     addCategoryHandler
   );
 
