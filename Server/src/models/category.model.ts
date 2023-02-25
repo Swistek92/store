@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 export interface CategoryDocument extends mongoose.Document {
   name: String;
   active: boolean;
+  nestedCategories?: [String];
   description?: string;
 }
 

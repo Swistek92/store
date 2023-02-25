@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./styles.module.css";
 import { FaHeart, FaShoppingCart, FaSearch } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
 const Header = () => {
   return (
     <header className={styles.header}>

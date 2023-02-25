@@ -2,7 +2,6 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import supertest from "supertest";
 import CategoryModel from "../models/category.model";
-import { addCategory, findCategory } from "../service/category.service";
 import createServer from "../utils/server";
 
 const app = createServer();

@@ -1,7 +1,6 @@
 import { SerializeResponse } from "./../utils/http";
 import { Request, Response, NextFunction } from "express";
 import { AnyZodObject } from "zod";
-import logger from "../utils/logger";
 const validateResource =
   (schema: AnyZodObject) =>
   (req: Request, res: Response, next: NextFunction) => {

@@ -57,7 +57,7 @@ export const fetchProductCategories = createAsyncThunk(
   async (thunkAPI) => {
     try {
       const response = await axios.get("http://localhost:3001/api/category/");
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return error;
     }
@@ -74,7 +74,7 @@ export const ProductSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchProductCategories.fulfilled, (state, action) => {
-      console.log(action);
+      // console.log(action);
       state.categories = action.payload;
     });
     builder.addCase(fetchProductCategories.rejected, (state, action) => {

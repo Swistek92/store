@@ -1,9 +1,8 @@
 import mongoose from "mongoose";
 import logger from "./logger";
+export const dbUrl = process.env.DATABASE;
 
 async function connect() {
-  const dbUrl = process.env.DATABASE;
-
   try {
     mongoose.set("strictQuery", false);
     await mongoose.connect(dbUrl!);

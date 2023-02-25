@@ -11,7 +11,7 @@ const payload = {
 const params = {
   params: object({
     id: string({
-      required_error: "categoryId is required",
+      required_error: "id is required",
     }),
   }),
 };

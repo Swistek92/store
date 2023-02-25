@@ -1,6 +1,7 @@
 import cors from "cors";
-import express, { Express, NextFunction, Request, Response } from "express";
+import express, { Express } from "express";
 import CategoryRoutes from "../Routes/category.routes";
+import MemRoutes from "../Routes/mem.routes";
 function createServer() {
   const app: Express = express();
   //body parser
@@ -8,6 +9,7 @@ function createServer() {
   app.use(cors());
 
   CategoryRoutes(app);
+  MemRoutes(app);
 
   return app;
 }
