@@ -4,11 +4,7 @@ import { SerializeResponse, unhandleError } from "../utils/http";
 import logger from "../utils/logger";
 
 const memCtrl = {
-  addMem: async function addMemHandler(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
+  addMem: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const newMem = await addMem(req.body);
       return res

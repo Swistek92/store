@@ -1,48 +1,40 @@
-import { Express } from "express";
+import express from "express";
 import validateResource from "../middleware/validateResource";
-import {
-  addCategoryHandler,
-  deleteCategoryHandler,
-  getAllCategoryHandler,
-  updateCategoryHandler,
-} from "../controller/category.controller";
 import validateMongoIdInParams from "../middleware/validateMongoIdInParams";
 import validateCategoryIsExist from "../middleware/Category/validateCategoryIsExist";
 import validateCategoryNameNoDuplicate from "../middleware/Category/validateCategoryNameNoDuplicate";
-import {
-  createCategorySchema,
-  deleteCategorySchema,
-  updateCategorySchema,
-} from "../schema/category.schema";
 
-const CategoryRoutes = (app: Express) => {
-  app.post(
-    "/api/category/",
-    [validateResource(createCategorySchema), validateCategoryNameNoDuplicate],
-    addCategoryHandler
-  );
+import { categorySchemas } from "../schema/category.schema";
+import categoryCtrl from "../controller/category.controller";
 
-  app.get("/api/category", getAllCategoryHandler);
+const router = express.Router();
 
-  app.put(
-    "/api/category/:id",
-    [
-      validateResource(updateCategorySchema),
-      validateMongoIdInParams,
-      validateCategoryIsExist,
-    ],
-    updateCategoryHandler
-  );
+router.post(
+  "/category",
+  [validateResource(categorySchemas.create), validateCategoryNameNoDuplicate],
+  categoryCtrl.addCategoryHandler
+);
 
-  app.delete(
-    "/api/category/:id",
-    [
-      validateResource(deleteCategorySchema),
-      validateMongoIdInParams,
-      validateCategoryIsExist,
-    ],
-    deleteCategoryHandler
-  );
-};
+router.get("/category", categoryCtrl.getAllCategoryHandler);
 
-export default CategoryRoutes;
+router.put(
+  "/category/:id",
+  [
+    validateResource(categorySchemas.update),
+    validateMongoIdInParams,
+    validateCategoryIsExist,
+  ],
+  categoryCtrl.updateCategoryHandler
+);
+
+router.delete(
+  "/category/:id",
+  [
+    validateResource(categorySchemas.delete),
+    validateMongoIdInParams,
+    validateCategoryIsExist,
+  ],
+  categoryCtrl.deleteCategoryHandler
+);
+
+export default router;

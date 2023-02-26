@@ -16,19 +16,19 @@ const params = {
   }),
 };
 
-export const createCategorySchema = object({
-  ...payload,
-});
+export const categorySchemas = {
+  create: object({
+    ...payload,
+  }),
+  delete: object({
+    ...params,
+  }),
+  update: object({
+    ...payload,
+    ...params,
+  }),
+};
 
-export const deleteCategorySchema = object({
-  ...params,
-});
-
-export const updateCategorySchema = object({
-  ...payload,
-  ...params,
-});
-
-export type createCategoryInput = TypeOf<typeof createCategorySchema>;
-export type deleteCategoryInput = TypeOf<typeof deleteCategorySchema>;
-export type updateCategoryInput = TypeOf<typeof updateCategorySchema>;
+export type createCategoryInput = TypeOf<typeof categorySchemas.create>;
+export type deleteCategoryInput = TypeOf<typeof categorySchemas.delete>;
+export type updateCategoryInput = TypeOf<typeof categorySchemas.update>;
