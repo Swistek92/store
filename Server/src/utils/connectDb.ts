@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import logger from "./logger";
 export const dbUrl = process.env.DATABASE;
 
-async function connect() {
+async function connectDb() {
   try {
     mongoose.set("strictQuery", false);
     await mongoose.connect(dbUrl!);
@@ -13,4 +13,4 @@ async function connect() {
   }
 }
 
-export default connect;
+export default connectDb;

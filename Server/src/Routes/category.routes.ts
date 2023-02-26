@@ -8,7 +8,7 @@ import {
 } from "../controller/category.controller";
 import validateMongoIdInParams from "../middleware/validateMongoIdInParams";
 import validateCategoryIsExist from "../middleware/Category/validateCategoryIsExist";
-import validateCategoryNameNoExist from "../middleware/Category/validateCategoryNameNoExist";
+import validateCategoryNameNoDuplicate from "../middleware/Category/validateCategoryNameNoDuplicate";
 import {
   createCategorySchema,
   deleteCategorySchema,
@@ -18,7 +18,7 @@ import {
 const CategoryRoutes = (app: Express) => {
   app.post(
     "/api/category/",
-    [validateResource(createCategorySchema), validateCategoryNameNoExist],
+    [validateResource(createCategorySchema), validateCategoryNameNoDuplicate],
     addCategoryHandler
   );
 

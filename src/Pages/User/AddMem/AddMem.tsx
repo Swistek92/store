@@ -6,6 +6,11 @@ import Preview from "../../../Components/PrevievImg/Preview";
 import AddMemValidationSchema from "../../../utils/FormValidators/AddMemValidationSchema";
 import { Button, Col, Form } from "react-bootstrap";
 import Multiselect from "multiselect-react-dropdown";
+import AxiosClient from "../../../utils/axios/AxiosClient";
+import { Blob } from "buffer";
+import { ChangeEvent } from "react";
+
+type InputChange = ChangeEvent<HTMLInputElement>;
 
 interface formData {
   image: string;
@@ -15,36 +20,65 @@ interface formData {
   description: string;
 }
 const AddMem = () => {
-  const formik = useFormik<formData>({
+  const formik = useFormik({
     initialValues: {
-      image: "",
+      image: File,
       title: "",
       author: "",
       categories: [],
       description: "",
     },
     validationSchema: AddMemValidationSchema,
-    onSubmit: () => {
+    onSubmit: async () => {
       console.log(formik.values);
+      // let img;
+      const data = new FormData();
+      // const imageBlob = new Blob(formik.values.image);
+      const reader = new FileReader();
+      // console.log(btoa(formik.values.image));
+      // reader.readAsDataURL(formik.values.image);
+
+      // data.append("image", formik.values.image);
+
+      // data.append("image", formik.values.image)
+      // data.append("image", formik.values.image)
+      // const reader = new FileReader();
+      // // reader.readAsDataURL(formik.values.image);
+      // reader.readAsBinaryString(formik.values.image)
+      // reader.onloadend = () => {
+      //   img = reader.result;
+      // };
+      // const save = await AxiosClient.post("/api/mem/", {
+      //   image: formik.values.image,
+      //   title: formik.values.title,
+      //   author: formik.values.author,
+      //   categories: formik.values.categories,
+      //   description: formik.values.description,
+      //   active: true,
+      // });
     },
   });
-
-  console.log(formik.errors);
+  const handleChangeFile = (e: InputChange) => {
+    const target = e.target as HTMLInputElement;
+    const files = target.files;
+    if (files) {
+      const file = files[0];
+      formik.setFieldValue("image", file);
+    }
+  };
   return (
     <div>
       <Form onSubmit={formik.handleSubmit}>
         <Form.Group controlId='formFile' className='m-3'>
           <Form.Label>Chooise image for your meme</Form.Label>
-          <Form.Control
-            onChange={(e: any) =>
-              formik.setFieldValue("image", e.target.files[0])
-            }
+          <input
+            onChange={handleChangeFile}
             type='file'
             name='image'
-            isInvalid={!!formik.errors.image && formik.touched.image}
+            // isInvalid={!!formik.errors.image && formik.touched.image}
           />
           <Form.Control.Feedback type='invalid'>
-            {formik.errors.image}
+            {/* {formik.errors.image} */}
           </Form.Control.Feedback>
         </Form.Group>
 
@@ -82,7 +116,7 @@ const AddMem = () => {
                   !!formik.errors.categories &&
                   formik.touched.categories &&
                   "1px solid red",
-                "border-radius": "5px",
+                borderRadius: "5px",
               },
             }}
             placeholder='Categories'

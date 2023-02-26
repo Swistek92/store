@@ -3,7 +3,7 @@ import { SerializeResponse } from "../../utils/http";
 import { Request, Response, NextFunction } from "express";
 import { findCategory } from "../../service/category.service";
 
-const validateCategoryNameNoExist = async (
+const validateCategoryNameNoDuplicate = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -24,4 +24,4 @@ const validateCategoryNameNoExist = async (
   next();
 };
 
-export default validateCategoryNameNoExist;
+export default validateCategoryNameNoDuplicate;

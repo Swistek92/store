@@ -1,21 +1,15 @@
-import { Express } from "express";
+import express from "express";
 import validateResource from "../middleware/validateResource";
-import validateMongoIdInParams from "../middleware/validateMongoIdInParams";
 import { createMemSchema } from "../schema/mem.schema";
-import { addMemHandler } from "../controller/mem.controller";
+import memCtrl from "../controller/mem.controller";
 import saveImageToCloudinary from "../middleware/saveImageToCloudinary";
 
-const MemRoutes = (app: Express) => {
-  // app.post(
-  //   "/api/mem/",
-  //   [validateResource(createCategorySchema), validateCategoryNameNoExist],
-  //   addCategoryHandler
-  // );
-  app.post(
-    "/api/mem/",
-    [validateResource(createMemSchema), saveImageToCloudinary],
-    addMemHandler
-  );
-};
+const router = express.Router();
 
-export default MemRoutes;
+router.post(
+  "/mem",
+  [validateResource(createMemSchema), saveImageToCloudinary],
+  memCtrl.addMem
+);
+
+export default router;

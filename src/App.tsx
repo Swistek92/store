@@ -45,7 +45,6 @@ export default App;
 
 const Root = () => {
   const location = useLocation();
-  console.log(location);
   if (location.pathname.startsWith("/user")) {
     return (
       <div>

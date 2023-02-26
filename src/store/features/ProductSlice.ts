@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { StringMappingType } from "typescript";
-
+import AxiosClient from "../../utils/axios/AxiosClient";
 // export type MenuType = string[];
 
 interface Category {
@@ -56,7 +56,7 @@ export const fetchProductCategories = createAsyncThunk(
   "person/fetch",
   async (thunkAPI) => {
     try {
-      const response = await axios.get("http://localhost:3001/api/category/");
+      const response = await AxiosClient.get("/api/category/");
       return response.data.data;
     } catch (error) {
       return error;
