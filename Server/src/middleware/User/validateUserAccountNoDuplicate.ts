@@ -1,7 +1,6 @@
 import { unhandleError } from "../../utils/http";
 import { SerializeResponse } from "../../utils/http";
 import { Request, Response, NextFunction } from "express";
-import { findCategory } from "../../service/category.service";
 import { findUserAccount } from "../../service/user.service";
 
 const validateUserAccountNoDuplicate = async (
@@ -10,7 +9,7 @@ const validateUserAccountNoDuplicate = async (
   next: NextFunction
 ) => {
   try {
-    const isDuplicated = await findUserAccount(req.body.account);
+    const isDuplicated = await findUserAccount({ account: req.body.account });
     if (isDuplicated) {
       return res
         .status(409)

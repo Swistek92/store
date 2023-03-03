@@ -1,4 +1,3 @@
-import cors from "cors";
 /* eslint-disable import/first */
 import * as dotenv from "dotenv";
 dotenv.config();
@@ -8,7 +7,6 @@ import logger from "./utils/logger";
 import connectDb from "./utils/connectDb";
 
 const port = config.get<number>("port");
-
 const app = createServer();
 
 app.listen(port, async () => {

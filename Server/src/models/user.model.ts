@@ -1,12 +1,12 @@
 import { kMaxLength } from "buffer";
 import mongoose from "mongoose";
 
-// export interface CategoryDocument extends mongoose.Document {
-//   name: String;
-//   active: boolean;
-//   nestedCategories?: [String];
-//   description?: string;
-// }
+export interface UserDocument {
+  name: String;
+  account: String;
+  password: String;
+  avatar?: string;
+}
 
 const userSchema = new mongoose.Schema(
   {
@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       require: [true, "please add your password"],
       trim: true,
+    },
+    role: {
+      type: String,
+      deflaut: "User",
     },
     avatar: {
       type: String,
