@@ -8,11 +8,7 @@ import {
 import { SerializeResponse, unhandleError } from "../utils/http";
 
 const categoryCtrl = {
-  deleteCategoryHandler: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  deleteCategoryHandler: async (req: Request, res: Response) => {
     try {
       const deletedCategory = await deleteCategory({ _id: req.params.id });
       res
@@ -25,11 +21,7 @@ const categoryCtrl = {
     }
   },
 
-  updateCategoryHandler: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  updateCategoryHandler: async (req: Request, res: Response) => {
     const update = req.body;
 
     try {
@@ -50,11 +42,7 @@ const categoryCtrl = {
     }
   },
 
-  addCategoryHandler: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  addCategoryHandler: async (req: Request, res: Response) => {
     try {
       const newCategory = await addCategory(req.body);
       return res
@@ -64,6 +52,7 @@ const categoryCtrl = {
       return unhandleError(error, res);
     }
   },
+
   getAllCategoryHandler: async (req: Request, res: Response) => {
     try {
       const category = await getAllCategory();

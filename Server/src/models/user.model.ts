@@ -1,4 +1,3 @@
-import { kMaxLength } from "buffer";
 import mongoose from "mongoose";
 
 export interface UserDocument {
@@ -6,6 +5,8 @@ export interface UserDocument {
   account: String;
   password: String;
   avatar?: string;
+  role?: string;
+  type?: string;
 }
 
 const userSchema = new mongoose.Schema(
@@ -29,7 +30,8 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      deflaut: "User",
+      enum: ["User", "Admin"],
+      deflaut: "User", //admin
     },
     avatar: {
       type: String,
@@ -38,7 +40,8 @@ const userSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      default: "normal",
+      enum: ["Register", "Login"],
+      default: "Register",
     },
   },
   {
@@ -46,6 +49,6 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-const UserModel = mongoose.model("User", userSchema);
+const UserModel = mongoose.model<UserDocument>("User", userSchema);
 
 export default UserModel;

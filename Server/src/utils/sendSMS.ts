@@ -8,7 +8,7 @@ const phoneFrom = `${process.env.TWILO_PHONE_NUMBER}`;
 const client = new Twilio(accountSid, authToken);
 // +13157847889;
 
-export const sendSms = (to: string, body: string, txt: string) => {
+const sendSms = (to: string, body: string, txt: string) => {
   try {
     client.messages
       .create({
@@ -21,3 +21,5 @@ export const sendSms = (to: string, body: string, txt: string) => {
     logger.error(error);
   }
 };
+
+export default sendSms;

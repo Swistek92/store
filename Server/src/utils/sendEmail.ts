@@ -1,3 +1,4 @@
+import { unhandleError } from "./http";
 import { OAuth2Client } from "google-auth-library";
 import logger from "./logger";
 const nodemailer = require("nodemailer");
@@ -38,9 +39,9 @@ const sendEmail = async (to: string, url: string, txt: string) => {
       subject: "Memes",
       html: `
               <div style="max-width: 700px; margin:auto; border: 10px solid #ddd; padding: 50px 20px; font-size: 110%;">
-              <h2 style="text-align: center; text-transform: uppercase;color: teal;">Welcome to the DevAT channel.</h2>
-              <p>Congratulations! You're almost set to start using Memes.
-                  Just click the button below to validate your email address.
+              <h2 style="text-align: center; text-transform: uppercase;color: teal;">Welcome to the Memes World.</h2>
+              <p>Congratulations! You're almost set to start!.
+                  Just click the button below to validate your email address!.
               </p>
               
               <a href=${url} style="background: crimson; text-decoration: none; color: white; padding: 10px 20px; margin: 10px 0; display: inline-block;">${txt}</a>
@@ -56,7 +57,6 @@ const sendEmail = async (to: string, url: string, txt: string) => {
     return result;
   } catch (error) {
     logger.error(error);
-    // return error
   }
 };
 

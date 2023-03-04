@@ -1,15 +1,13 @@
 import { SerializeResponse, unhandleError } from "../utils/http";
-import { NextFunction, Request, Response } from "express";
-import UserModel from "../models/user.model";
+import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { addUser } from "../service/user.service";
-import { generateActiveToken } from "../utils/authTokens";
 import sendEmail from "../utils/sendEmail";
-import { sendSms } from "../utils/sendSMS";
+import sendSms from "../utils/sendSMS";
 import logger from "../utils/logger";
 import { AuthToken } from "../../config/interface";
-
+import UserService from "../service/user.service";
+import AuthTokenGenerator from "../utils/authTokenGenerator";
 const CLIENT_URL = `${process.env.BASE_URL}`;
 
 const userCtrl = {
@@ -18,10 +16,9 @@ const userCtrl = {
       const { name, password, account } = req.body;
       const passwordHash = await bcrypt.hash(password, 12);
 
-      // const newUser = await addUser(req.body);
       const newUser = { name, account, password: passwordHash };
 
-      const activeToken = generateActiveToken({ newUser });
+      const activeToken = AuthTokenGenerator.Active({ newUser });
       const url = `${CLIENT_URL}/active/${activeToken}`;
 
       if (typeof account === "string") {
@@ -43,6 +40,7 @@ const userCtrl = {
       unhandleError(error, res);
     }
   },
+
   activeAccount: async (req: Request, res: Response) => {
     try {
       const { activeToken } = req.body;
@@ -62,7 +60,9 @@ const userCtrl = {
             )
           );
       }
-      const user = await addUser(newUser);
+      // catch a try register with diffrent role
+      newUser.role = "User";
+      const user = await UserService.addUser(newUser);
       logger.info(decoded);
       return res
         .status(201)
@@ -78,8 +78,91 @@ const userCtrl = {
       unhandleError(error, res);
     }
   },
-  getAll: async () => {
+
+  getAll: async (req: Request, res: Response) => {
     try {
+      logger.info("Add middleware for restrict just for  a admin !!");
+      const users = await UserService.getAllUsers();
+      return res
+        .status(200)
+        .json(new SerializeResponse(200, "Ok", "sucess! your users", users));
+    } catch (error) {
+      unhandleError(error, res);
+    }
+  },
+
+  login: async (req: Request, res: Response) => {
+    try {
+      const { password, user } = req.body;
+      // req.body.user is added in validation middleware.
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res
+          .status(400)
+          .json(new SerializeResponse(400, "Error", "Bad password"));
+      }
+
+      const accessToken = AuthTokenGenerator.Access({ id: user._id });
+      const refreshToken = AuthTokenGenerator.Refresh({ id: user._id });
+
+      res.cookie("refreshtoken", refreshToken, {
+        httpOnly: true,
+        path: "/api/user/refreshToken",
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      });
+
+      delete user._doc.password;
+
+      return res.status(200).json(
+        new SerializeResponse(200, "Ok", "you are login", {
+          ...user._doc,
+          accessToken,
+        })
+      );
+    } catch (error) {
+      unhandleError(error, res);
+    }
+  },
+
+  logout: async (req: Request, res: Response) => {
+    try {
+      res.clearCookie("refreshtoken", {
+        path: "/api/user/refreshToken",
+      });
+      return res.status(200).json(new SerializeResponse(200, "Ok", "logout"));
+    } catch (error) {
+      unhandleError(error, res);
+    }
+  },
+
+  refreshToken: async (req: Request, res: Response) => {
+    try {
+      const validateExist = (obj: any) => {
+        if (!obj) {
+          return res
+            .status(400)
+            .json(new SerializeResponse(400, "Error", " please log in"));
+        }
+      };
+
+      const token = req.cookies.refreshtoken;
+
+      validateExist(token);
+
+      const decoded = jwt.verify(
+        token,
+        `${process.env.REFRESH_TOKEN_SECRET}`
+      ) as AuthToken;
+
+      validateExist(decoded);
+
+      const user = await UserService.findUser({ _id: decoded.id }, "-password");
+
+      validateExist(user);
+
+      const accessToken = AuthTokenGenerator.Access({ id: user!._id });
+
+      res.json({ accessToken });
     } catch (error) {}
   },
 };
