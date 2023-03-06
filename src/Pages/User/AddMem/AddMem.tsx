@@ -12,13 +12,13 @@ import { ChangeEvent } from "react";
 
 type InputChange = ChangeEvent<HTMLInputElement>;
 
-interface formData {
-  image: string;
-  title: string;
-  author: string;
-  categories: [string] | [];
-  description: string;
-}
+// interface formData {
+//   image: File;
+//   title: string;
+//   author: string;
+//   categories: [string] | [];
+//   description: string;
+// }
 const AddMem = () => {
   const formik = useFormik({
     initialValues: {
@@ -31,31 +31,8 @@ const AddMem = () => {
     validationSchema: AddMemValidationSchema,
     onSubmit: async () => {
       console.log(formik.values);
-      // let img;
       const data = new FormData();
-      // const imageBlob = new Blob(formik.values.image);
       const reader = new FileReader();
-      // console.log(btoa(formik.values.image));
-      // reader.readAsDataURL(formik.values.image);
-
-      // data.append("image", formik.values.image);
-
-      // data.append("image", formik.values.image)
-      // data.append("image", formik.values.image)
-      // const reader = new FileReader();
-      // // reader.readAsDataURL(formik.values.image);
-      // reader.readAsBinaryString(formik.values.image)
-      // reader.onloadend = () => {
-      //   img = reader.result;
-      // };
-      // const save = await AxiosClient.post("/api/mem/", {
-      //   image: formik.values.image,
-      //   title: formik.values.title,
-      //   author: formik.values.author,
-      //   categories: formik.values.categories,
-      //   description: formik.values.description,
-      //   active: true,
-      // });
     },
   });
   const handleChangeFile = (e: InputChange) => {
@@ -81,7 +58,6 @@ const AddMem = () => {
             {/* {formik.errors.image} */}
           </Form.Control.Feedback>
         </Form.Group>
-
         <Form.Group controlId='formTitle' className='m-3'>
           <Form.Label>Title</Form.Label>
           <Form.Control
@@ -94,7 +70,6 @@ const AddMem = () => {
             {formik.errors.title}
           </Form.Control.Feedback>
         </Form.Group>
-
         <Form.Group controlId='formAuthor' className='m-3'>
           <Form.Label>Author</Form.Label>
           <Form.Control
@@ -133,7 +108,6 @@ const AddMem = () => {
             <p style={{ color: "red" }}>Required</p>
           )}
         </Form.Group>
-
         <Form.Group className='m-3' controlId='formDescription'>
           <Form.Label>Description</Form.Label>
           <Form.Control
@@ -151,8 +125,7 @@ const AddMem = () => {
           </Form.Control.Feedback>
         </Form.Group>
 
-        {formik.values.image && <Preview file={formik.values.image} />}
-
+        {/* {formik.values.image && <Preview file={formik.values.image} />} */}
         <Button className='m-3' variant='primary' type='submit'>
           Submit
         </Button>

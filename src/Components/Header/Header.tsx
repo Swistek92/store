@@ -2,13 +2,30 @@ import React from "react";
 import styles from "./styles.module.css";
 import { FaHeart, FaShoppingCart, FaSearch } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
+import Button from "react-bootstrap/Button";
+import LoginModal from "../Modals/Login/Login";
+import RegisterModal from "../Modals/Register/Register";
+import { useAppDispatch } from "../../store/store";
+import { showLogin, showRegister } from "../../store/features/ModalSlice";
+
 const Header = () => {
+  const dispatch = useAppDispatch();
+
+  const showLoginModal = () => dispatch(showLogin());
+  const showRegisterModal = () => dispatch(showRegister());
+
   return (
     <header className={styles.header}>
       <div className={styles.container}>
         <div className={styles.logo}>
           <p>eStore</p>
         </div>
+        <Button variant='primary' onClick={showLoginModal}>
+          LoginModal
+        </Button>
+        <Button variant='primary' onClick={showRegisterModal}>
+          RegisterModal
+        </Button>
         <div className={styles.inputGroup}>
           <select>
             <option>All</option>
@@ -38,6 +55,8 @@ const Header = () => {
           </div>
         </div>
       </div>
+      <LoginModal />
+      <RegisterModal />
     </header>
   );
 };

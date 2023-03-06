@@ -78,7 +78,7 @@ describe("category", () => {
     beforeAll(() => {
       CategoryModel.collection.drop();
     });
-    it("should return 400 if we dont send name ", async () => {
+    it("should return 400 if we dont send name", async () => {
       const { body } = await supertest(app)
         .post("/api/category/")
         .send(category);

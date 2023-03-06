@@ -1,6 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
-import { StringMappingType } from "typescript";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import AxiosClient from "../../utils/axios/AxiosClient";
 // export type MenuType = string[];
 
@@ -59,7 +57,7 @@ export const fetchProductCategories = createAsyncThunk(
       const response = await AxiosClient.get("/api/category/");
       return response.data.data;
     } catch (error) {
-      return error;
+      console.error(error);
     }
   }
 );

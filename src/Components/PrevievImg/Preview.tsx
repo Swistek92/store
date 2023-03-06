@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Preview = ({ file }: { file: any }) => {
+const Preview = ({ file }: { file: File }) => {
   const [preview, setPriveiw] = useState<any>();
 
   if (file) {
@@ -12,7 +12,7 @@ const Preview = ({ file }: { file: any }) => {
   }
   return (
     <div>
-      <img style={{ width: "300px" }} alt='preview' src={preview} />
+      {file && <img style={{ width: "300px" }} alt='preview' src={preview} />}
     </div>
   );
 };

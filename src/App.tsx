@@ -1,7 +1,6 @@
 import Header from "./Components/Header/Header";
 import TopMenu from "./Components/TopMenu/TopMenu";
 import styles from "./App.module.css";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { useAppDispatch } from "./store/store";
 import { useEffect } from "react";
 import { fetchProductCategories } from "./store/features/ProductSlice";
@@ -20,6 +19,8 @@ import AddMem from "./Pages/User/AddMem/AddMem";
 import SideBar from "./Components/SideBar/SideBar";
 import User from "./Pages/User/User";
 import Mem from "./Pages/Mem/Mem";
+import Login from "./Components/Modals/Login/Login";
+import Register from "./Components/Modals/Register/Register";
 
 function App() {
   const dispatch = useAppDispatch();

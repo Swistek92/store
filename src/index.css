@@ -19,3 +19,12 @@ body {
 html {
   background-color: rgba(250, 235, 215, 0.43);
 }
+
+ul li {
+  list-style: none;
+  text-decoration: none;
+}
+a {
+  text-decoration: none !important;
+  color: inherit !important;
+}

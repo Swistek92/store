@@ -1,3 +1,4 @@
+import { modalSlice } from "./features/ModalSlice";
 import { TopMenuSlice } from "./features/TopMenuSlice";
 import { ProductSlice } from "./features/ProductSlice";
 import { configureStore } from "@reduxjs/toolkit";
@@ -7,7 +8,7 @@ export const store = configureStore({
   reducer: {
     menu: TopMenuSlice.reducer,
     product: ProductSlice.reducer,
-    // cart: CartSlice.reducer,
+    modal: modalSlice.reducer,
   },
 });
 
