@@ -1,3 +1,11 @@
-.container {
-  height: calc(100vh - 5.5rem);
+.options {
+  display: flex;
+  flex-direction: row;
+}
+
+.option {
+  padding: 3px;
+  display: flex;
+  flex-direction: column;
+  margin: 3px;
 }

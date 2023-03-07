@@ -2,6 +2,7 @@ import { FaArrowRight, FaStarOfDavid } from "react-icons/fa";
 import { useAppSelector } from "../../store/store";
 import styles from "./styles.module.css";
 import { Link } from "react-router-dom";
+import Footer from "../../Components/Footer/Footer";
 
 // const product = ;require("../../../assets/img/shop-1.jpg")
 

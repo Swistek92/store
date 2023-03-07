@@ -19,8 +19,8 @@ import AddMem from "./Pages/User/AddMem/AddMem";
 import SideBar from "./Components/SideBar/SideBar";
 import User from "./Pages/User/User";
 import Mem from "./Pages/Mem/Mem";
-import Login from "./Components/Modals/Login/Login";
-import Register from "./Components/Modals/Register/Register";
+
+import Footer from "./Components/Footer/Footer";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -50,10 +50,11 @@ const Root = () => {
     return (
       <div>
         <Header />
-        <TopMenu />
+        {/* <TopMenu /> */}
         <div className={styles.container}>
           <Outlet />
         </div>
+        <Footer />
       </div>
     );
   }
@@ -61,7 +62,7 @@ const Root = () => {
     <>
       <div>
         <Header />
-        <TopMenu />
+        {/* <TopMenu /> */}
         <>
           <div className={styles.container}>
             <div className={styles.col1}>
@@ -72,7 +73,9 @@ const Root = () => {
             </div>
           </div>
         </>
+        <div className={styles.footer}></div>
       </div>
+      {/* <Footer /> */}
     </>
   );
 };

@@ -7,7 +7,10 @@ export default function ErrorPage() {
     if (error.status === 404) {
       return (
         <div>
-          This page doesn't exist! <NavLink to='/'>Go Home</NavLink>
+          <p>Something went wrong</p>
+          <h1>
+            <NavLink to='/'>Go Home</NavLink>
+          </h1>
         </div>
       );
     }
@@ -27,7 +30,10 @@ export default function ErrorPage() {
 
   return (
     <div>
-      Something went wrong <NavLink to='/'>Go Home</NavLink>
+      <p>Something went wrong</p>
+      <h1>
+        <NavLink to='/'>Go Home</NavLink>
+      </h1>
     </div>
   );
 }

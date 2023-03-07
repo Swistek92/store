@@ -1,4 +1,59 @@
-.header {
+.navbar {
+  color: #b3afaf;
+}
+.brand {
+  color: #b3afaf;
+  transition: all 0.5s ease;
+}
+.brand:hover {
+  color: #b3afaf;
+  transform: scale(1.1);
+}
+.brand::after {
+  position: absolute;
+  background-color: red;
+  border: none;
+  content: "";
+  left: 50%;
+  margin-left: -20%;
+  bottom: -1px;
+  width: 40%;
+  height: 3px;
+  transform: scale(0);
+  transition: all 1s ease;
+}
+.brand:hover::after {
+  transform: scale(1.1);
+}
+
+.offcanvas a {
+  color: #fff;
+  text-decoration: none;
+  display: block;
+  position: relative;
+  text-align: center;
+}
+.offcanvas a:hover {
+  transform: scale(1.1);
+}
+.offcanvas a::after {
+  position: absolute;
+  background-color: red;
+  border: none;
+  content: "";
+  left: 50%;
+  margin-left: -20%;
+  bottom: -1px;
+  width: 40%;
+  height: 3px;
+  transform: scale(0);
+  transition: all 1s ease;
+}
+.offcanvas a:hover::after {
+  transform: scale(1);
+}
+
+/* .header {
   position: fixed;
   z-index: 100;
 }
@@ -16,7 +71,7 @@
 
 .logo {
   color: white;
-  /* display: none; */
+
 }
 
 .searchInput {
@@ -41,7 +96,6 @@
   margin: 0;
   padding: 0;
   text-align: center;
-  /* flex-direction: ; */
 }
 
 .icon {
@@ -63,9 +117,7 @@
 
 .links {
   display: flex;
-  /* flex-direction: row; */
-  /* align-items: center; */
-  /* justify-content: space-between; */
+
 }
 
 .widget a {
@@ -75,8 +127,8 @@
 }
 
 @media (min-width: 500px) {
-  /* … */
+ 
   .widget a {
     font-size: 15px;
   }
-}
+} */

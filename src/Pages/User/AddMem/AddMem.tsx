@@ -12,13 +12,6 @@ import { ChangeEvent } from "react";
 
 type InputChange = ChangeEvent<HTMLInputElement>;
 
-// interface formData {
-//   image: File;
-//   title: string;
-//   author: string;
-//   categories: [string] | [];
-//   description: string;
-// }
 const AddMem = () => {
   const formik = useFormik({
     initialValues: {

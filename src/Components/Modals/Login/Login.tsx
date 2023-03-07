@@ -1,16 +1,33 @@
-import { Button, Modal } from "react-bootstrap";
-import { hideLogin, showRegister } from "../../../store/features/ModalSlice";
+import React from "react";
+import { useFormik } from "formik";
+import { Button, Form, Modal } from "react-bootstrap";
+import {
+  hideLogin,
+  hideRegister,
+  showRegister,
+} from "../../../store/features/ModalSlice";
 import { useAppDispatch, useAppSelector } from "../../../store/store";
-
-const LoginModal = () => {
+import LoginUserValidationSchema from "../../../utils/FormValidators/LoginUserValidationSchema";
+import styles from "./styles.module.css";
+const Login = () => {
   const dispatch = useAppDispatch();
   const { showLogin } = useAppSelector((state) => state.modal);
-
-  const handleHide = () => {
-    dispatch(hideLogin());
-  };
-
+  const handleHide = () => dispatch(hideLogin());
   const showRegisterModal = () => dispatch(showRegister());
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: LoginUserValidationSchema,
+    onSubmit: () => {
+      console.log(formik.errors);
+      console.log(formik.values);
+
+      // handleHide();
+    },
+  });
 
   return (
     <Modal
@@ -21,18 +38,61 @@ const LoginModal = () => {
       centered
     >
       <Modal.Header closeButton>
-        <Modal.Title id='contained-modal-title-vcenter'>LOGIN</Modal.Title>
+        <Modal.Title id='contained-modal-title-vcenter'>Login</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <h4> LOGIN</h4>
-        LOGIN LOGIN LOGIN LOGIN LOGIN LOGIN LOGIN LOGIN LOGIN
-        <p>LOGIN</p>
-        {/* <Button onClick={() => props.showregister()}>show register</Button> */}
+        {/* FORM */}
+        <Form onSubmit={formik.handleSubmit}>
+          <Form.Group className='mb-3' controlId='email'>
+            <Form.Label>Email address</Form.Label>
+            <Form.Control
+              name='email'
+              onChange={formik.handleChange}
+              type='email'
+              placeholder='email'
+              isInvalid={!!formik.errors.email && formik.touched.email}
+              value={formik.values.email}
+            />
+            <Form.Text className='text-muted'>
+              We'll never share your email with anyone else.
+            </Form.Text>
+            <Form.Control.Feedback type='invalid'>
+              {formik.errors.email}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group className='mb-3' controlId='Password'>
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              name='password'
+              onChange={formik.handleChange}
+              type='password'
+              placeholder='Password'
+              isInvalid={!!formik.errors.password && formik.touched.password}
+              value={formik.values.password}
+            />
+            <Form.Control.Feedback type='invalid'>
+              {formik.errors.password}
+            </Form.Control.Feedback>
+            <Form.Label onClick={() => console.log("open modal for recover ")}>
+              forgot password? click here
+            </Form.Label>
+          </Form.Group>
+
+          <Button variant='primary' type='submit'>
+            Submit
+          </Button>
+        </Form>
+        {/* FORM */}
       </Modal.Body>
       <Modal.Footer>
         <Modal.Body>
-          <h6>Do not have account?</h6>
-          <Button onClick={showRegisterModal}>Register</Button>
+          <div className={styles.options}>
+            <div className={styles.option}>
+              <h6>Do you have account?</h6>
+              <Button onClick={showRegisterModal}>Login</Button>
+            </div>
+          </div>
         </Modal.Body>
         <Button onClick={handleHide}>Close</Button>
       </Modal.Footer>
@@ -40,4 +100,4 @@ const LoginModal = () => {
   );
 };
 
-export default LoginModal;
+export default Login;
