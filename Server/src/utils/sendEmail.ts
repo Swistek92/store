@@ -8,7 +8,7 @@ const CLIENT_SECRET = `${process.env.MAIL_CLIENT_SECRET}`;
 const REFRESH_TOKEN = `${process.env.REFRESH_TOKEN_MAIL}`;
 const SENDER_MAIL = `${process.env.SENDER_EMAIL_ADDRESS}`;
 
-export const sendRegistrationEmail = async (
+export const SendRegistrationEmail = async (
   to: string,
   url: string,
   txt: string

@@ -15,31 +15,37 @@ interface RegisterUserInterface {
   name: string;
   password: string;
   account: string | number;
-  sendRegistrationEmail: (to: string, url: string, txt: string) => Promise<any>;
-  sendRegistrationSms: (to: string, body: string, txt: string) => Promise<void>;
+  SendRegistrationEmail: (to: string, url: string, txt: string) => Promise<any>;
+  SendRegistrationSms: (to: string, body: string, txt: string) => Promise<void>;
+  ActiveTokenGenerator: (payload: object) => string;
+  HashPassword: (
+    data: string | Buffer,
+    saltOrRounds: string | number
+  ) => Promise<string>;
 }
-
 const userCtrl = {
   register: async ({
     name,
     password,
     account,
-    sendRegistrationEmail,
-    sendRegistrationSms,
+    SendRegistrationEmail,
+    SendRegistrationSms,
+    ActiveTokenGenerator,
+    HashPassword,
   }: RegisterUserInterface) => {
-    const passwordHash = bcrypt.hash(password, 12);
+    const passwordHash = HashPassword(password, 12);
     const newUser = { name, account, password: passwordHash };
-    const activeToken = AuthTokenGenerator.Active({ newUser });
+    const activeToken = ActiveTokenGenerator({ newUser });
     const url = `${CLIENT_URL}/active/${activeToken}`;
     const isEmail = z.string().email();
 
     if (isEmail.parse(account) && typeof account === "string") {
       const msg = "verify you email addres";
-      await sendRegistrationEmail(account, url, msg);
+      await SendRegistrationEmail(account, url, msg);
       return msg;
     } else {
       const msg = "verify you phone number";
-      await sendRegistrationSms(`${account}`, url, msg);
+      await SendRegistrationSms(`${account}`, url, msg);
       return msg;
     }
   },

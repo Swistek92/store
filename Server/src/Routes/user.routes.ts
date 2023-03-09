@@ -1,12 +1,16 @@
+import bcrypt from "bcrypt";
+
 import { userSchemas } from "./../schema/user.schema";
 import express, { Request, Response } from "express";
 import userCtrl from "../controller/user.controlller";
 import validateUserAccountNoDuplicate from "../middleware/User/validateUserAccountNoDuplicate";
 import validateResource from "../middleware/validateResource";
 import validateUserAccountIsExist from "../middleware/User/validateUserAccountIsExist";
-import { sendRegistrationEmail } from "../utils/sendEmail";
-import { sendRegistrationSms } from "../utils/sendSMS";
+import { SendRegistrationEmail } from "../utils/sendEmail";
+import { SendRegistrationSms } from "../utils/sendSMS";
 import { SerializeResponse, unhandleError } from "../utils/http";
+import AuthTokenGenerator from "../utils/authTokenGenerator";
+
 const router = express.Router();
 
 router.post(
@@ -19,8 +23,10 @@ router.post(
         name,
         password,
         account,
-        sendRegistrationEmail,
-        sendRegistrationSms,
+        SendRegistrationEmail,
+        SendRegistrationSms,
+        ActiveTokenGenerator: AuthTokenGenerator.Active,
+        HashPassword: bcrypt.hash,
       });
       return res.status(200).json(new SerializeResponse(200, "Ok", msg));
     } catch (error) {

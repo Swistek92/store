@@ -8,7 +8,7 @@ const phoneFrom = `${process.env.TWILO_PHONE_NUMBER}`;
 const client = new Twilio(accountSid!, authToken);
 // +13157847889;
 
-export const sendRegistrationSms = async (
+export const SendRegistrationSms = async (
   to: string,
   body: string,
   txt: string
