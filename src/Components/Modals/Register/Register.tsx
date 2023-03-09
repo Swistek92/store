@@ -1,23 +1,38 @@
 import { useFormik } from "formik";
+import { useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
-import { hideRegister, showLogin } from "../../../store/features/ModalSlice";
+import {
+  hideRegister,
+  showLogin,
+  switchRegisterType,
+} from "../../../store/features/ModalSlice";
 import { useAppDispatch, useAppSelector } from "../../../store/store";
 import RegisterUserValidationSchema from "../../../utils/FormValidators/RegisterUserValidationSchema";
+import styles from "./styles.module.css";
 
 const RegisterModal = () => {
   const dispatch = useAppDispatch();
-  const { showRegister } = useAppSelector((state) => state.modal);
+  const { showRegister, registerType } = useAppSelector((state) => state.modal);
   const handleHide = () => dispatch(hideRegister());
   const showLoginModal = () => dispatch(showLogin());
+
+  const switchToEmail = () => {
+    dispatch(switchRegisterType("email"));
+    formik.errors.account = undefined;
+  };
+  const switchToPhone = () => {
+    dispatch(switchRegisterType("phone"));
+    formik.errors.account = undefined;
+  };
 
   const formik = useFormik({
     initialValues: {
       name: "",
-      email: "",
+      account: "",
       password: "",
       confirmPassword: "",
     },
-    validationSchema: RegisterUserValidationSchema,
+    validationSchema: RegisterUserValidationSchema(),
     onSubmit: () => {
       console.log("123");
       console.log(formik.errors);
@@ -56,23 +71,60 @@ const RegisterModal = () => {
             </Form.Control.Feedback>
           </Form.Group>
 
-          <Form.Group className='mb-3' controlId='email'>
-            <Form.Label>Email address</Form.Label>
-            <Form.Control
-              name='email'
-              onChange={formik.handleChange}
-              type='email'
-              placeholder='email'
-              isInvalid={!!formik.errors.email && formik.touched.email}
-              value={formik.values.email}
-            />
-            <Form.Text className='text-muted'>
-              We'll never share your email with anyone else.
-            </Form.Text>
-            <Form.Control.Feedback type='invalid'>
-              {formik.errors.email}
-            </Form.Control.Feedback>
-          </Form.Group>
+          {registerType === "email" && (
+            <Form.Group className='mb-3' controlId='account'>
+              <Form.Label>Email address</Form.Label>
+              <Form.Control
+                name='account'
+                onChange={formik.handleChange}
+                type='email'
+                placeholder='email'
+                isInvalid={!!formik.errors.account && formik.touched.account}
+                value={formik.values.account}
+              />
+              <Form.Label className='text-muted'>
+                <p className={styles.label}>
+                  do you want login with phone?{" "}
+                  <span
+                    className={styles.switchAccount}
+                    onClick={switchToPhone}
+                  >
+                    click here
+                  </span>
+                </p>
+              </Form.Label>
+              <Form.Control.Feedback type='invalid'>
+                {formik.errors.account}
+              </Form.Control.Feedback>
+            </Form.Group>
+          )}
+          {registerType === "phone" && (
+            <Form.Group className='mb-3' controlId='account'>
+              <Form.Label>Phone</Form.Label>
+              <Form.Control
+                name='account'
+                onChange={formik.handleChange}
+                type='text'
+                placeholder='phone'
+                isInvalid={!!formik.errors.account && formik.touched.account}
+                value={formik.values.account}
+              />
+              <Form.Label className='text-muted'>
+                <p className={styles.label}>
+                  do you want login with email?{" "}
+                  <span
+                    className={styles.switchAccount}
+                    onClick={switchToEmail}
+                  >
+                    click here
+                  </span>
+                </p>
+              </Form.Label>
+              <Form.Control.Feedback type='invalid'>
+                {formik.errors.account}
+              </Form.Control.Feedback>
+            </Form.Group>
+          )}
 
           <Form.Group className='mb-3' controlId='Password'>
             <Form.Label>Password</Form.Label>
@@ -115,8 +167,12 @@ const RegisterModal = () => {
       </Modal.Body>
       <Modal.Footer>
         <Modal.Body>
-          <h6>Do you have account?</h6>
-          <Button onClick={showLoginModal}>Login</Button>
+          <div className={styles.options}>
+            <div className={styles.option}>
+              <h6>Do you have account?</h6>
+              <Button onClick={showLoginModal}>Login</Button>
+            </div>
+          </div>
         </Modal.Body>
         <Button onClick={handleHide}>Close</Button>
       </Modal.Footer>

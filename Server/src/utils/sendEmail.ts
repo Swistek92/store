@@ -1,4 +1,3 @@
-import { unhandleError } from "./http";
 import { OAuth2Client } from "google-auth-library";
 import logger from "./logger";
 const nodemailer = require("nodemailer");
@@ -9,7 +8,11 @@ const CLIENT_SECRET = `${process.env.MAIL_CLIENT_SECRET}`;
 const REFRESH_TOKEN = `${process.env.REFRESH_TOKEN_MAIL}`;
 const SENDER_MAIL = `${process.env.SENDER_EMAIL_ADDRESS}`;
 
-const sendEmail = async (to: string, url: string, txt: string) => {
+export const sendRegistrationEmail = async (
+  to: string,
+  url: string,
+  txt: string
+) => {
   const oAuth2Client = new OAuth2Client(
     CLIENT_ID,
     CLIENT_SECRET,
@@ -53,11 +56,9 @@ const sendEmail = async (to: string, url: string, txt: string) => {
             `,
     };
 
-    const result = await transport.sendMail(mailOptions);
-    return result;
+    await transport.sendMail(mailOptions);
+    // return result;
   } catch (error) {
     logger.error(error);
   }
 };
-
-export default sendEmail;

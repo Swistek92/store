@@ -2,42 +2,45 @@ import { SerializeResponse, unhandleError } from "../utils/http";
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import sendEmail from "../utils/sendEmail";
-import sendSms from "../utils/sendSMS";
+// import { sendRegistrationEmail } from "../utils/sendEmail";
+// import { sendRegistrationSms } from "../utils/sendSMS";
+import { z } from "zod";
 import logger from "../utils/logger";
 import { AuthToken } from "../../config/interface";
 import UserService from "../service/user.service";
 import AuthTokenGenerator from "../utils/authTokenGenerator";
 const CLIENT_URL = `${process.env.BASE_URL}`;
 
+interface RegisterUserInterface {
+  name: string;
+  password: string;
+  account: string | number;
+  sendRegistrationEmail: (to: string, url: string, txt: string) => Promise<any>;
+  sendRegistrationSms: (to: string, body: string, txt: string) => Promise<void>;
+}
+
 const userCtrl = {
-  register: async (req: Request, res: Response) => {
-    try {
-      const { name, password, account } = req.body;
-      const passwordHash = await bcrypt.hash(password, 12);
+  register: async ({
+    name,
+    password,
+    account,
+    sendRegistrationEmail,
+    sendRegistrationSms,
+  }: RegisterUserInterface) => {
+    const passwordHash = bcrypt.hash(password, 12);
+    const newUser = { name, account, password: passwordHash };
+    const activeToken = AuthTokenGenerator.Active({ newUser });
+    const url = `${CLIENT_URL}/active/${activeToken}`;
+    const isEmail = z.string().email();
 
-      const newUser = { name, account, password: passwordHash };
-
-      const activeToken = AuthTokenGenerator.Active({ newUser });
-      const url = `${CLIENT_URL}/active/${activeToken}`;
-
-      if (typeof account === "string") {
-        sendEmail(account, url, "veryfy your email adress");
-        return res.status(200).json(
-          new SerializeResponse(200, "Ok", "sucess! check your email", {
-            msg: "sucess! check your email",
-          })
-        );
-      } else {
-        sendSms(`${account}`, url, "verify, your phone number");
-        return res.status(200).json(
-          new SerializeResponse(200, "Ok", "sucess! check your email", {
-            msg: "sucess! check your phone",
-          })
-        );
-      }
-    } catch (error) {
-      unhandleError(error, res);
+    if (isEmail.parse(account) && typeof account === "string") {
+      const msg = "verify you email addres";
+      await sendRegistrationEmail(account, url, msg);
+      return msg;
+    } else {
+      const msg = "verify you phone number";
+      await sendRegistrationSms(`${account}`, url, msg);
+      return msg;
     }
   },
 

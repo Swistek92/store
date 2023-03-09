@@ -8,18 +8,22 @@ const phoneFrom = `${process.env.TWILO_PHONE_NUMBER}`;
 const client = new Twilio(accountSid!, authToken);
 // +13157847889;
 
-const sendSms = (to: string, body: string, txt: string) => {
+export const sendRegistrationSms = async (
+  to: string,
+  body: string,
+  txt: string
+) => {
   try {
-    client.messages
-      .create({
-        body: `wellcome to mems, ${body} - ${txt}`,
-        from: phoneFrom,
-        to: `+48${to}`,
-      })
-      .then((message: { sid: string }) => console.log(message.sid));
+    const clinet = await client.messages.create({
+      body: `wellcome to mems, ${body} - ${txt}`,
+      from: phoneFrom,
+      to: `+48${to}`,
+    });
+
+    console.log(client);
+
+    // .then((message: { sid: string }) => console.log(message.sid));
   } catch (error) {
     logger.error(error);
   }
 };
-
-export default sendSms;

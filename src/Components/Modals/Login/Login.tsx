@@ -17,10 +17,10 @@ const Login = () => {
 
   const formik = useFormik({
     initialValues: {
-      email: "",
+      account: "",
       password: "",
     },
-    validationSchema: LoginUserValidationSchema,
+    validationSchema: LoginUserValidationSchema(),
     onSubmit: () => {
       console.log(formik.errors);
       console.log(formik.values);
@@ -44,20 +44,20 @@ const Login = () => {
         {/* FORM */}
         <Form onSubmit={formik.handleSubmit}>
           <Form.Group className='mb-3' controlId='email'>
-            <Form.Label>Email address</Form.Label>
+            <Form.Label>Account</Form.Label>
             <Form.Control
-              name='email'
+              name='account'
               onChange={formik.handleChange}
-              type='email'
-              placeholder='email'
-              isInvalid={!!formik.errors.email && formik.touched.email}
-              value={formik.values.email}
+              type='text'
+              placeholder='account'
+              isInvalid={!!formik.errors.account && formik.touched.account}
+              value={formik.values.account}
             />
             <Form.Text className='text-muted'>
               We'll never share your email with anyone else.
             </Form.Text>
             <Form.Control.Feedback type='invalid'>
-              {formik.errors.email}
+              {formik.errors.account}
             </Form.Control.Feedback>
           </Form.Group>
 
@@ -90,7 +90,7 @@ const Login = () => {
           <div className={styles.options}>
             <div className={styles.option}>
               <h6>Do you have account?</h6>
-              <Button onClick={showRegisterModal}>Login</Button>
+              <Button onClick={showRegisterModal}>Register</Button>
             </div>
           </div>
         </Modal.Body>
