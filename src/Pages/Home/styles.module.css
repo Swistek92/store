@@ -13,6 +13,7 @@
   position: relative;
   min-width: 30%;
   margin: 20px;
+  transition: all ease-in 0.5s;
 }
 .card .arrow {
   position: absolute;
@@ -33,7 +34,7 @@
 .card:hover {
   opacity: 0.7;
   cursor: pointer;
-  transform: scale(1.05);
+  transform: scale(0.95);
 }
 
 .card img {

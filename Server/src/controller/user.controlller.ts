@@ -15,7 +15,11 @@ interface RegisterUserInterface {
   name: string;
   password: string;
   account: string | number;
-  SendRegistrationEmail: (to: string, url: string, txt: string) => Promise<any>;
+  SendRegistrationEmail: (
+    to: string,
+    url: string,
+    txt: string
+  ) => Promise<void>;
   SendRegistrationSms: (to: string, body: string, txt: string) => Promise<void>;
   ActiveTokenGenerator: (payload: object) => string;
   HashPassword: (
@@ -23,6 +27,7 @@ interface RegisterUserInterface {
     saltOrRounds: string | number
   ) => Promise<string>;
 }
+
 const userCtrl = {
   register: async ({
     name,
@@ -33,7 +38,7 @@ const userCtrl = {
     ActiveTokenGenerator,
     HashPassword,
   }: RegisterUserInterface) => {
-    const passwordHash = HashPassword(password, 12);
+    const passwordHash = await HashPassword(password, 12);
     const newUser = { name, account, password: passwordHash };
     const activeToken = ActiveTokenGenerator({ newUser });
     const url = `${CLIENT_URL}/active/${activeToken}`;
@@ -41,11 +46,19 @@ const userCtrl = {
 
     if (isEmail.parse(account) && typeof account === "string") {
       const msg = "verify you email addres";
-      await SendRegistrationEmail(account, url, msg);
+      try {
+        await SendRegistrationEmail(account, url, msg);
+      } catch (error) {
+        logger.error(error);
+      }
       return msg;
     } else {
       const msg = "verify you phone number";
-      await SendRegistrationSms(`${account}`, url, msg);
+      try {
+        await SendRegistrationSms(`${account}`, url, msg);
+      } catch (error) {
+        logger.error(error);
+      }
       return msg;
     }
   },
@@ -53,9 +66,11 @@ const userCtrl = {
   activeAccount: async (req: Request, res: Response) => {
     try {
       const { activeToken } = req.body;
+      // console.log(req.body);
       const decoded = jwt.verify(
         activeToken,
-        `${process.env.ACTIVE_TOKEN_SECRET}`
+        `${process.env.ACTIVE_TOKEN_PUBLIC}`,
+        { algorithms: ["RS256"] }
       ) as AuthToken;
       const { newUser } = decoded;
       if (!newUser) {
@@ -69,7 +84,9 @@ const userCtrl = {
             )
           );
       }
+
       // catch a try register with diffrent role
+
       newUser.role = "User";
       const user = await UserService.addUser(newUser);
       logger.info(decoded);

@@ -10,6 +10,13 @@ import { useAppDispatch, useAppSelector } from "../../../store/store";
 import RegisterUserValidationSchema from "../../../utils/FormValidators/RegisterUserValidationSchema";
 import styles from "./styles.module.css";
 
+interface RegisterValues {
+  name: string;
+  account: string;
+  password: string;
+  confirmPassword: string;
+}
+
 const RegisterModal = () => {
   const dispatch = useAppDispatch();
   const { showRegister, registerType } = useAppSelector((state) => state.modal);
@@ -25,18 +32,21 @@ const RegisterModal = () => {
     formik.errors.account = undefined;
   };
 
+  const initialValues: RegisterValues = {
+    name: "",
+    account: "",
+    password: "",
+    confirmPassword: "",
+  };
+
   const formik = useFormik({
-    initialValues: {
-      name: "",
-      account: "",
-      password: "",
-      confirmPassword: "",
-    },
+    initialValues,
     validationSchema: RegisterUserValidationSchema(),
     onSubmit: () => {
       console.log("123");
       console.log(formik.errors);
       console.log(formik.values);
+      console.log(formik);
 
       // handleHide();
     },
@@ -159,8 +169,8 @@ const RegisterModal = () => {
             </Form.Control.Feedback>
           </Form.Group>
 
-          <Button variant='primary' type='submit'>
-            Submit
+          <Button disabled={!formik.isValid} variant='primary' type='submit'>
+            Register
           </Button>
         </Form>
         {/* FORM */}

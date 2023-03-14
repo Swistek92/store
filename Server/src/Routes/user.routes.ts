@@ -1,5 +1,4 @@
 import bcrypt from "bcrypt";
-
 import { userSchemas } from "./../schema/user.schema";
 import express, { Request, Response } from "express";
 import userCtrl from "../controller/user.controlller";
@@ -42,8 +41,6 @@ router.post("/user/login", [validateUserAccountIsExist], userCtrl.login);
 router.get("/user/logout", userCtrl.logout);
 
 router.get("/user/refreshToken", userCtrl.refreshToken);
-
-// Add middleware for restrict just for  a admin
 
 router.get("/user/getAll", userCtrl.getAll);
 export default router;

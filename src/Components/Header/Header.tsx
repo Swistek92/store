@@ -4,7 +4,7 @@ import { FaHeart, FaShoppingCart, FaSearch } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import LoginModal from "../Modals/Login/Login";
 import RegisterModal from "../Modals/Register/Register";
-import { useAppDispatch } from "../../store/store";
+import { useAppDispatch, useAppSelector } from "../../store/store";
 import { showLogin, showRegister } from "../../store/features/ModalSlice";
 import {
   Container,
@@ -20,7 +20,10 @@ const Header = () => {
   const dispatch = useAppDispatch();
   const showLoginModal = () => dispatch(showLogin());
   const showRegisterModal = () => dispatch(showRegister());
-
+  const { user, isError, isLogin, errorMessage, isLoading } = useAppSelector(
+    (state) => state.user
+  );
+  console.log(user);
   return (
     <Navbar
       fixed='top'
@@ -47,19 +50,23 @@ const Header = () => {
           </Offcanvas.Header>
           <Offcanvas.Body>
             <Nav className='justify-content-end flex-grow-1 pe-3'>
-              <Nav.Link onClick={showRegisterModal}>Register</Nav.Link>
-              <Nav.Link onClick={showLoginModal}>Login</Nav.Link>
+              {!isLogin && (
+                <Nav.Link onClick={showRegisterModal}>Register</Nav.Link>
+              )}
+              {!isLogin && <Nav.Link onClick={showLoginModal}>Login</Nav.Link>}
 
-              <NavDropdown
-                className={styles.dropdown}
-                title='UserName'
-                id={`offcanvasNavbarDropdown-expand-xl`}
-              >
-                <NavLink to={`/user/`}>User Page</NavLink>
-                <NavLink to={`/user/profile`}>Profile</NavLink>
-                <NavDropdown.Divider />
-                <NavLink to={`/user/logout`}>logout</NavLink>
-              </NavDropdown>
+              {isLogin && (
+                <NavDropdown
+                  className={styles.dropdown}
+                  title={`user: ${user.name}`}
+                  id={`offcanvasNavbarDropdown-expand-xl`}
+                >
+                  <NavLink to={`/user/`}>User Page</NavLink>
+                  <NavLink to={`/user/profile`}>Profile</NavLink>
+                  <NavDropdown.Divider />
+                  <NavLink to={`/user/logout`}>logout</NavLink>
+                </NavDropdown>
+              )}
             </Nav>
             <HeaderSearch />
             {/* palce for search */}

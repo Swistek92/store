@@ -54,7 +54,7 @@ const Root = () => {
         <div className={styles.container}>
           <Outlet />
         </div>
-        <Footer />
+        {/* <Footer /> */}
       </div>
     );
   }
