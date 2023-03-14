@@ -19,11 +19,8 @@ export const SendRegistrationSms = async (
       from: phoneFrom,
       to: `+48${to}`,
     });
-
-    console.log(client);
-
-    // .then((message: { sid: string }) => console.log(message.sid));
-  } catch (error) {
+  } catch (error: any) {
     logger.error(error);
+    throw new Error(error);
   }
 };

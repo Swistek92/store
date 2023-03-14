@@ -9,6 +9,7 @@ import { SendRegistrationEmail } from "../utils/sendEmail";
 import { SendRegistrationSms } from "../utils/sendSMS";
 import { SerializeResponse, unhandleError } from "../utils/http";
 import AuthTokenGenerator from "../utils/authTokenGenerator";
+import logger from "../utils/logger";
 
 const router = express.Router();
 
@@ -18,7 +19,7 @@ router.post(
   async (req: Request, res: Response) => {
     const { name, password, account } = req.body;
     try {
-      const msg = await userCtrl.register({
+      const response = await userCtrl.register({
         name,
         password,
         account,
@@ -27,7 +28,16 @@ router.post(
         ActiveTokenGenerator: AuthTokenGenerator.Active,
         HashPassword: bcrypt.hash,
       });
-      return res.status(200).json(new SerializeResponse(200, "Ok", msg));
+
+      if (response[0] === "ok") {
+        return res
+          .status(200)
+          .json(new SerializeResponse(200, "Ok", response[1]));
+      } else {
+        return res
+          .status(400)
+          .json(new SerializeResponse(400, "Error", response[1]));
+      }
     } catch (error) {
       unhandleError(error, res);
     }

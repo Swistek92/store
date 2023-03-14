@@ -43,30 +43,41 @@ const userCtrl = {
     const activeToken = ActiveTokenGenerator({ newUser });
     const url = `${CLIENT_URL}/active/${activeToken}`;
     const isEmail = z.string().email();
+    const parseEmail = isEmail.safeParse(account);
 
-    if (isEmail.parse(account) && typeof account === "string") {
-      const msg = "verify you email addres";
+    let response: ["ok" | "error", string] = ["ok", ""];
+
+    if (parseEmail.success && typeof account === "string") {
       try {
+        const msg = "verify you email addres";
         await SendRegistrationEmail(account, url, msg);
-      } catch (error) {
-        logger.error(error);
+        response = ["ok", msg];
+      } catch (error: any) {
+        response = [
+          "error",
+          error.message || "something went wrong with sending Email",
+        ];
       }
-      return msg;
     } else {
-      const msg = "verify you phone number";
       try {
+        const msg = "verify you phone number";
         await SendRegistrationSms(`${account}`, url, msg);
-      } catch (error) {
-        logger.error(error);
+        response = ["ok", msg];
+      } catch (error: any) {
+        response = [
+          "error",
+          error.message || "something went wrong with sending SMS",
+        ];
       }
-      return msg;
     }
+
+    return response;
   },
 
   activeAccount: async (req: Request, res: Response) => {
     try {
       const { activeToken } = req.body;
-      // console.log(req.body);
+
       const decoded = jwt.verify(
         activeToken,
         `${process.env.ACTIVE_TOKEN_PUBLIC}`,

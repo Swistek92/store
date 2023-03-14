@@ -5,21 +5,9 @@ const payload = {
     name: string({
       required_error: "Name is required",
     }).min(4, "min 4 chars long"),
-    account: z.union([
-      z
-        .string({
-          required_error: "email or phone is required",
-        })
-        .email({
-          message: "Invalid email adress",
-        }),
-      z
-        .number({
-          required_error: "email or phone is required",
-        })
-        .min(100000000)
-        .max(999999999),
-    ]),
+    account: string({
+      required_error: "account are required",
+    }),
     password: string({
       required_error: "password is required",
     }).min(6, "min length 6 chars long "),

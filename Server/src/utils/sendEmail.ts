@@ -57,8 +57,8 @@ export const SendRegistrationEmail = async (
     };
 
     await transport.sendMail(mailOptions);
-    // return result;
-  } catch (error) {
+  } catch (error: any) {
     logger.error(error);
+    throw new Error(error);
   }
 };
