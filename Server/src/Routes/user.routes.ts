@@ -10,6 +10,7 @@ import { SendRegistrationSms } from "../utils/sendSMS";
 import { SerializeResponse, unhandleError } from "../utils/http";
 import AuthTokenGenerator from "../utils/authTokenGenerator";
 import logger from "../utils/logger";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
@@ -28,7 +29,6 @@ router.post(
         ActiveTokenGenerator: AuthTokenGenerator.Active,
         HashPassword: bcrypt.hash,
       });
-
       return res.status(response.statusCode).json(response);
     } catch (error) {
       unhandleError(error, res);
@@ -36,7 +36,24 @@ router.post(
   }
 );
 
-router.post("/user/active", userCtrl.activeAccount);
+// router.post("/user/active", userCtrl.activeAccount);
+router.post("/user/active", async (req: Request, res: Response) => {
+  const { activeToken } = req.body;
+  if (!activeToken) {
+    return res
+      .status(400)
+      .json(new SerializeResponse(400, "Error", "no activeToken!"));
+  }
+  try {
+    const response = await userCtrl.activeAccount({
+      activeToken,
+      decodeToken: jwt.verify,
+    });
+    return res.status(response.statusCode).json(response);
+  } catch (error) {
+    unhandleError(error, res);
+  }
+});
 
 router.post("/user/login", [validateUserAccountIsExist], userCtrl.login);
 

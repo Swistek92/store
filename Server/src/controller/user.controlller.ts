@@ -9,6 +9,7 @@ import logger from "../utils/logger";
 import { AuthToken } from "../../config/interface";
 import UserService from "../service/user.service";
 import AuthTokenGenerator from "../utils/authTokenGenerator";
+import { KeyObject } from "crypto";
 const CLIENT_URL = `${process.env.BASE_URL}`;
 
 interface RegisterUserInterface {
@@ -28,6 +29,15 @@ interface RegisterUserInterface {
   ) => Promise<string>;
 }
 
+interface ActiveAccountInterface {
+  activeToken: string;
+  decodeToken: (
+    token: string,
+    secretOrPublicKey: jwt.Secret,
+    options?: (jwt.VerifyOptions & { complete?: false | undefined }) | undefined
+  ) => string | jwt.JwtPayload;
+}
+
 const userCtrl = {
   register: async ({
     name,
@@ -42,23 +52,17 @@ const userCtrl = {
     const newUser = { name, account, password: passwordHash };
     const activeToken = ActiveTokenGenerator({ newUser });
     const url = `${CLIENT_URL}/active/${activeToken}`;
-    const isEmail = z.string().email();
-    const parseEmail = isEmail.safeParse(account);
+    const emailValiadtor = z.string().email();
+    const parseEmail = emailValiadtor.safeParse(account);
 
     let response: SerializeResponse;
-    // let response: ["ok" | "error", string] = ["ok", ""];
 
     if (parseEmail.success && typeof account === "string") {
       try {
         const msg = "verify you email addres";
         await SendRegistrationEmail(account, url, msg);
-        // response = ["ok", msg];
         response = new SerializeResponse(200, "Ok", msg);
       } catch (error: any) {
-        // [
-        //   "error",
-        //   error.message || "something went wrong with sending Email",
-        // ];
         response = new SerializeResponse(
           400,
           "Error",
@@ -82,26 +86,24 @@ const userCtrl = {
     return response;
   },
 
-  activeAccount: async (req: Request, res: Response) => {
+  activeAccount: async ({
+    activeToken,
+    decodeToken,
+  }: ActiveAccountInterface) => {
     try {
-      const { activeToken } = req.body;
-
-      const decoded = jwt.verify(
+      const decoded = decodeToken(
         activeToken,
         `${process.env.ACTIVE_TOKEN_PUBLIC}`,
         { algorithms: ["RS256"] }
       ) as AuthToken;
+
       const { newUser } = decoded;
       if (!newUser) {
-        return res
-          .status(500)
-          .json(
-            new SerializeResponse(
-              500,
-              "Error",
-              "invalid authentication, remember you have just 15min to active your account!"
-            )
-          );
+        return new SerializeResponse(
+          500,
+          "Error",
+          "invalid authentication, remember you have just 15min to active your account!"
+        );
       }
 
       // catch a try register with diffrent role
@@ -109,18 +111,19 @@ const userCtrl = {
       newUser.role = "User";
       const user = await UserService.addUser(newUser);
       logger.info(decoded);
-      return res
-        .status(201)
-        .json(
-          new SerializeResponse(
-            201,
-            "Ok",
-            "sucess! acocunt activated and created, you can login",
-            user
-          )
-        );
-    } catch (error) {
-      unhandleError(error, res);
+      return new SerializeResponse(
+        201,
+        "Ok",
+        "sucess! acocunt activated and created, you can login",
+        user
+      );
+    } catch (error: any) {
+      return new SerializeResponse(
+        500,
+        "Error",
+        error.message ||
+          "invalid authentication, remember you have just 15min to active your account!"
+      );
     }
   },
 
