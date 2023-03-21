@@ -45,29 +45,37 @@ const userCtrl = {
     const isEmail = z.string().email();
     const parseEmail = isEmail.safeParse(account);
 
-    let response: ["ok" | "error", string] = ["ok", ""];
+    let response: SerializeResponse;
+    // let response: ["ok" | "error", string] = ["ok", ""];
 
     if (parseEmail.success && typeof account === "string") {
       try {
         const msg = "verify you email addres";
         await SendRegistrationEmail(account, url, msg);
-        response = ["ok", msg];
+        // response = ["ok", msg];
+        response = new SerializeResponse(200, "Ok", msg);
       } catch (error: any) {
-        response = [
-          "error",
-          error.message || "something went wrong with sending Email",
-        ];
+        // [
+        //   "error",
+        //   error.message || "something went wrong with sending Email",
+        // ];
+        response = new SerializeResponse(
+          400,
+          "Error",
+          error.message || "smonthing went wrong"
+        );
       }
     } else {
       try {
         const msg = "verify you phone number";
         await SendRegistrationSms(`${account}`, url, msg);
-        response = ["ok", msg];
+        response = new SerializeResponse(200, "Ok", msg);
       } catch (error: any) {
-        response = [
-          "error",
-          error.message || "something went wrong with sending SMS",
-        ];
+        response = new SerializeResponse(
+          400,
+          "Error",
+          error.message || "smonthing went wrong"
+        );
       }
     }
 

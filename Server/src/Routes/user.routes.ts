@@ -29,15 +29,7 @@ router.post(
         HashPassword: bcrypt.hash,
       });
 
-      if (response[0] === "ok") {
-        return res
-          .status(200)
-          .json(new SerializeResponse(200, "Ok", response[1]));
-      } else {
-        return res
-          .status(400)
-          .json(new SerializeResponse(400, "Error", response[1]));
-      }
+      return res.status(response.statusCode).json(response);
     } catch (error) {
       unhandleError(error, res);
     }
