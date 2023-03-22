@@ -1,15 +1,13 @@
 import { SerializeResponse, unhandleError } from "../utils/http";
 import { Request, Response } from "express";
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 // import { sendRegistrationEmail } from "../utils/sendEmail";
 // import { sendRegistrationSms } from "../utils/sendSMS";
 import { z } from "zod";
 import logger from "../utils/logger";
-import { AuthToken } from "../../config/interface";
+import { AuthToken, LoginUser } from "../../config/interface";
 import UserService from "../service/user.service";
 import AuthTokenGenerator from "../utils/authTokenGenerator";
-import { KeyObject } from "crypto";
 const CLIENT_URL = `${process.env.BASE_URL}`;
 
 interface RegisterUserInterface {
@@ -38,6 +36,29 @@ interface ActiveAccountInterface {
   ) => string | jwt.JwtPayload;
 }
 
+interface LoginInterface {
+  password: string;
+  user: LoginUser;
+  comparePassword: (
+    data: string | Buffer,
+    encrypted: string
+  ) => Promise<boolean>;
+  accessToken: string;
+}
+
+interface RefreshTokenInteface {
+  token: string;
+  validateToken: (
+    token: string,
+    secretOrPublicKey: jwt.Secret,
+    options?:
+      | (jwt.VerifyOptions & {
+          complete?: false | undefined;
+        })
+      | undefined
+  ) => string | jwt.JwtPayload;
+}
+
 const userCtrl = {
   register: async ({
     name,
@@ -55,15 +76,13 @@ const userCtrl = {
     const emailValiadtor = z.string().email();
     const parseEmail = emailValiadtor.safeParse(account);
 
-    let response: SerializeResponse;
-
     if (parseEmail.success && typeof account === "string") {
       try {
         const msg = "verify you email addres";
         await SendRegistrationEmail(account, url, msg);
-        response = new SerializeResponse(200, "Ok", msg);
+        return new SerializeResponse(200, "Ok", msg);
       } catch (error: any) {
-        response = new SerializeResponse(
+        return new SerializeResponse(
           400,
           "Error",
           error.message || "smonthing went wrong"
@@ -73,17 +92,15 @@ const userCtrl = {
       try {
         const msg = "verify you phone number";
         await SendRegistrationSms(`${account}`, url, msg);
-        response = new SerializeResponse(200, "Ok", msg);
+        return new SerializeResponse(200, "Ok", msg);
       } catch (error: any) {
-        response = new SerializeResponse(
+        return new SerializeResponse(
           400,
           "Error",
           error.message || "smonthing went wrong"
         );
       }
     }
-
-    return response;
   },
 
   activeAccount: async ({
@@ -93,7 +110,7 @@ const userCtrl = {
     try {
       const decoded = decodeToken(
         activeToken,
-        `${process.env.ACTIVE_TOKEN_PUBLIC}`,
+        `${process.env.ACTIVE_TOKEN_PRIVATE}`,
         { algorithms: ["RS256"] }
       ) as AuthToken;
 
@@ -105,9 +122,7 @@ const userCtrl = {
           "invalid authentication, remember you have just 15min to active your account!"
         );
       }
-
       // catch a try register with diffrent role
-
       newUser.role = "User";
       const user = await UserService.addUser(newUser);
       logger.info(decoded);
@@ -127,91 +142,73 @@ const userCtrl = {
     }
   },
 
-  getAll: async (req: Request, res: Response) => {
+  getAll: async () => {
     try {
       logger.info("Add middleware for restrict just for  a admin !!");
       const users = await UserService.getAllUsers();
-      return res
-        .status(200)
-        .json(new SerializeResponse(200, "Ok", "sucess! your users", users));
+      return new SerializeResponse(200, "Ok", "sucess! your users", users);
     } catch (error) {
-      unhandleError(error, res);
+      return new SerializeResponse(400, "Error", "smth went wrong");
     }
   },
 
-  login: async (req: Request, res: Response) => {
+  login: async ({
+    password,
+    user,
+    comparePassword,
+    accessToken,
+  }: LoginInterface) => {
     try {
-      const { password, user } = req.body;
-      // req.body.user is added in validation middleware.
-      const isMatch = await bcrypt.compare(password, user.password);
+      const isMatch = await comparePassword(password, user.password);
       if (!isMatch) {
-        return res
-          .status(400)
-          .json(new SerializeResponse(400, "Error", "Bad password"));
+        return new SerializeResponse(400, "Error", "Bad password");
       }
 
-      const accessToken = AuthTokenGenerator.Access({ id: user._id });
-      const refreshToken = AuthTokenGenerator.Refresh({ id: user._id });
+      let ReturnUser: any = user;
 
-      res.cookie("refreshtoken", refreshToken, {
-        httpOnly: true,
-        path: "/api/user/refreshToken",
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      ReturnUser.password = undefined;
+
+      return new SerializeResponse(200, "Ok", "you are login", {
+        ...ReturnUser._doc,
+        accessToken,
       });
-
-      delete user._doc.password;
-
-      return res.status(200).json(
-        new SerializeResponse(200, "Ok", "you are login", {
-          ...user._doc,
-          accessToken,
-        })
+    } catch (error: any) {
+      return new SerializeResponse(
+        400,
+        "Error",
+        error.message || "smth went wrong with login"
       );
-    } catch (error) {
-      unhandleError(error, res);
     }
   },
 
-  logout: async (req: Request, res: Response) => {
+  refreshToken: async ({ token, validateToken }: RefreshTokenInteface) => {
     try {
-      res.clearCookie("refreshtoken", {
-        path: "/api/user/refreshToken",
-      });
-      return res.status(200).json(new SerializeResponse(200, "Ok", "logout"));
-    } catch (error) {
-      unhandleError(error, res);
-    }
-  },
-
-  refreshToken: async (req: Request, res: Response) => {
-    try {
-      const validateExist = (obj: any) => {
-        if (!obj) {
-          return res
-            .status(400)
-            .json(new SerializeResponse(400, "Error", " please log in"));
-        }
-      };
-
-      const token = req.cookies.refreshtoken;
-
-      validateExist(token);
-
-      const decoded = jwt.verify(
+      const decoded = validateToken(
         token,
-        `${process.env.REFRESH_TOKEN_SECRET}`
+        `${process.env.REFRESH_TOKEN_PRIVATE!}`,
+        { algorithms: ["RS256"] }
       ) as AuthToken;
-
-      validateExist(decoded);
+      if (!decoded) {
+        return new SerializeResponse(400, "Error", "invalid token");
+      }
 
       const user = await UserService.findUser({ _id: decoded.id }, "-password");
 
-      validateExist(user);
+      if (!user) {
+        return new SerializeResponse(400, "Error", "can not find a user");
+      }
 
       const accessToken = AuthTokenGenerator.Access({ id: user!._id });
 
-      res.json({ accessToken });
-    } catch (error) {}
+      return new SerializeResponse(200, "Ok", "new token", accessToken);
+    } catch (error: any) {
+      logger.info(error);
+      return new SerializeResponse(
+        400,
+        "Error",
+        error.message || "smth went wrong with login"
+      );
+    }
   },
 };
 
