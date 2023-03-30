@@ -2,7 +2,8 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { Express } from "express";
 import morgan from "morgan";
-import routes from "../Routes";
+import { UserRouter, MemRouter, CategoryRouter } from "../Routes";
+
 function createServer() {
   const app: Express = express();
   //body parser
@@ -12,9 +13,9 @@ function createServer() {
   app.use(morgan("dev"));
   app.use(cookieParser());
 
-  app.use("/api", routes.userRouter);
-  app.use("/api", routes.memRouter);
-  app.use("/api", routes.categoryRouter);
+  app.use("/api", UserRouter);
+  app.use("/api", MemRouter);
+  app.use("/api", CategoryRouter);
   return app;
 }
 

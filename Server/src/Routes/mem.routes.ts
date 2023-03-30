@@ -4,12 +4,12 @@ import { createMemSchema } from "../schema/mem.schema";
 import memCtrl from "../controller/mem.controller";
 import saveImageToCloudinary from "../middleware/saveImageToCloudinary";
 
-const router = express.Router();
+export const MemRouter = express.Router();
 
-router.post(
+MemRouter.post(
   "/mem",
   [validateResource(createMemSchema), saveImageToCloudinary],
   memCtrl.addMem
 );
 
-export default router;
+export default MemRouter;

@@ -3,7 +3,7 @@ import { SerializeResponse } from "../../utils/http";
 import { Request, Response, NextFunction } from "express";
 import UserService from "../../service/user.service";
 
-export const validateUserAccountIsExist = async (
+export const validateUserIsAdmin = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -16,8 +16,12 @@ export const validateUserAccountIsExist = async (
       return res
         .status(400)
         .json(new SerializeResponse(400, "Error", "this account do not exist"));
-    } else {
-      req.body.user = user;
+    } else if (user.role !== "Admin") {
+      return res
+        .status(401)
+        .json(
+          new SerializeResponse(401, "Error", "Unauthorized, you are not admin")
+        );
     }
   } catch (error) {
     return unhandleError(error, res);

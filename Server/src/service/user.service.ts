@@ -1,6 +1,7 @@
 import { UserDocument } from "./../models/user.model";
 import UserModel from "../models/user.model";
 import { FilterQuery } from "mongoose";
+import { LoginUser } from "../../config/interface";
 
 const UserService = {
   addUser: async (user: UserDocument) => {

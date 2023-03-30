@@ -13,7 +13,6 @@ const validateResource =
       });
       next();
     } catch (error) {
-      logger.info("req", req);
       return res
         .status(400)
         .json(new SerializeResponse(400, "Error", "Invalid_Type", error));

@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 // import { sendRegistrationEmail } from "../utils/sendEmail";
 // import { sendRegistrationSms } from "../utils/sendSMS";
 import { z } from "zod";
-import logger from "../utils/logger";
 import { AuthToken, LoginUser } from "../../config/interface";
 import UserService from "../service/user.service";
 import AuthTokenGenerator from "../utils/authTokenGenerator";
@@ -43,7 +42,6 @@ interface LoginInterface {
     data: string | Buffer,
     encrypted: string
   ) => Promise<boolean>;
-  accessToken: string;
 }
 
 interface RefreshTokenInteface {
@@ -79,8 +77,13 @@ const userCtrl = {
     if (parseEmail.success && typeof account === "string") {
       try {
         const msg = "verify you email addres";
-        await SendRegistrationEmail(account, url, msg);
-        return new SerializeResponse(200, "Ok", msg);
+        if (process.env.test) {
+          return new SerializeResponse(200, "Ok", msg, activeToken);
+        } else {
+          await SendRegistrationEmail(account, url, msg);
+
+          return new SerializeResponse(200, "Ok", msg);
+        }
       } catch (error: any) {
         return new SerializeResponse(
           400,
@@ -91,8 +94,12 @@ const userCtrl = {
     } else {
       try {
         const msg = "verify you phone number";
-        await SendRegistrationSms(`${account}`, url, msg);
-        return new SerializeResponse(200, "Ok", msg);
+        if (process.env.test) {
+          return new SerializeResponse(200, "Ok", msg, activeToken);
+        } else {
+          await SendRegistrationSms(`${account}`, url, msg);
+          return new SerializeResponse(200, "Ok", msg);
+        }
       } catch (error: any) {
         return new SerializeResponse(
           400,
@@ -125,7 +132,6 @@ const userCtrl = {
       // catch a try register with diffrent role
       newUser.role = "User";
       const user = await UserService.addUser(newUser);
-      logger.info(decoded);
       return new SerializeResponse(
         201,
         "Ok",
@@ -144,7 +150,6 @@ const userCtrl = {
 
   getAll: async () => {
     try {
-      logger.info("Add middleware for restrict just for  a admin !!");
       const users = await UserService.getAllUsers();
       return new SerializeResponse(200, "Ok", "sucess! your users", users);
     } catch (error) {
@@ -152,12 +157,7 @@ const userCtrl = {
     }
   },
 
-  login: async ({
-    password,
-    user,
-    comparePassword,
-    accessToken,
-  }: LoginInterface) => {
+  login: async ({ password, user, comparePassword }: LoginInterface) => {
     try {
       const isMatch = await comparePassword(password, user.password);
       if (!isMatch) {
@@ -170,7 +170,6 @@ const userCtrl = {
 
       return new SerializeResponse(200, "Ok", "you are login", {
         ...ReturnUser._doc,
-        accessToken,
       });
     } catch (error: any) {
       return new SerializeResponse(
@@ -198,11 +197,12 @@ const userCtrl = {
         return new SerializeResponse(400, "Error", "can not find a user");
       }
 
-      const accessToken = AuthTokenGenerator.Access({ id: user!._id });
+      const accessToken = AuthTokenGenerator.Access({ id: user._id });
 
-      return new SerializeResponse(200, "Ok", "new token", accessToken);
+      return new SerializeResponse(200, "Ok", "new access token", {
+        accessToken,
+      });
     } catch (error: any) {
-      logger.info(error);
       return new SerializeResponse(
         400,
         "Error",

@@ -11,13 +11,11 @@ const saveImageToCloudinary = async (
 ) => {
   try {
     const img = req.body.image;
-    logger.info("IMG BEFORE SAVE", img);
     const uploadImg = await cloudinary.v2.uploader.upload(img, {
       folder: "Mem",
       resource_type: "image",
     });
     req.body.image = uploadImg.secure_url;
-    logger.info("req body image", req.body.image);
   } catch (error) {
     throw new Error("upload img problem");
   }

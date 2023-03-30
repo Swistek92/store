@@ -1,6 +1,7 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import supertest from "supertest";
+import { SinkPage } from "twilio/lib/rest/events/v1/sink";
 import CategoryModel from "../models/category.model";
 import createServer from "../utils/server";
 
@@ -8,13 +9,6 @@ const app = createServer();
 
 const category = {
   name: "Mqq111231qqn",
-  active: true,
-  nestedCategories: ["T-shirt", "Jacket"],
-  description: "Discover the latest trends in men's fashion and style. ",
-};
-
-const noExistingCategory = {
-  name: "MansPinkDress",
   active: true,
   nestedCategories: ["T-shirt", "Jacket"],
   description: "Discover the latest trends in men's fashion and style. ",

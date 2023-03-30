@@ -2,9 +2,14 @@ import { LoginUser } from "./../../config/interface";
 import bcrypt from "bcrypt";
 import { userSchemas } from "./../schema/user.schema";
 import express, { Request, response, Response } from "express";
-import validateUserAccountNoDuplicate from "../middleware/User/validateUserAccountNoDuplicate";
 import validateResource from "../middleware/validateResource";
-import validateUserAccountIsExist from "../middleware/User/validateUserAccountIsExist";
+import {
+  validateRouteJustForAdmin,
+  validateRouteJustForUser,
+  validateUserAccountIsExist,
+  validateUserAccountNoDuplicate,
+  validateUserIsAdmin,
+} from "../middleware/User";
 import { SendRegistrationEmail } from "../utils/sendEmail";
 import { SendRegistrationSms } from "../utils/sendSMS";
 import { SerializeResponse, unhandleError } from "../utils/http";
@@ -13,9 +18,9 @@ import logger from "../utils/logger";
 import jwt from "jsonwebtoken";
 import userCtrl from "../controller/user.controlller";
 
-const router = express.Router();
+export const UserRouter = express.Router();
 
-router.post(
+UserRouter.post(
   "/user/register",
   [validateResource(userSchemas.create), validateUserAccountNoDuplicate],
   async (req: Request, res: Response) => {
@@ -37,7 +42,7 @@ router.post(
   }
 );
 
-router.post("/user/active", async (req: Request, res: Response) => {
+UserRouter.post("/user/active", async (req: Request, res: Response) => {
   const { activeToken } = req.body;
   if (!activeToken) {
     return res
@@ -56,7 +61,7 @@ router.post("/user/active", async (req: Request, res: Response) => {
 });
 
 // router.post("/user/login", [validateUserAccountIsExist], userCtrl.login);
-router.post(
+UserRouter.post(
   "/user/login",
   [validateUserAccountIsExist],
   async (req: Request, res: Response) => {
@@ -70,12 +75,15 @@ router.post(
         password,
         user,
         comparePassword,
-        accessToken,
+      });
+
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        maxAge: 15 * 60 * 1000, // 15min
       });
 
       res.cookie("refreshtoken", refreshToken, {
         httpOnly: true,
-        path: "/api/user/refreshToken",
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       });
 
@@ -86,14 +94,19 @@ router.post(
   }
 );
 
-router.get("/user/logout", (req: Request, res: Response) => {
-  res.clearCookie("refreshtoken", {
-    path: "/api/user/refreshToken",
-  });
-  return res.status(200).json(new SerializeResponse(200, "Ok", "logout"));
+//validate exist user for test during development
+UserRouter.get("/user/logout", (req: Request, res: Response) => {
+  try {
+    res.clearCookie("refreshtoken");
+    res.clearCookie("accessToken");
+
+    return res.status(200).json(new SerializeResponse(200, "Ok", "logout"));
+  } catch (error) {
+    unhandleError(error, res);
+  }
 });
 
-router.get("/user/refreshToken", async (req: Request, res: Response) => {
+UserRouter.get("/user/refreshToken", async (req: Request, res: Response) => {
   const token = req.cookies.refreshtoken;
   if (!token) {
     return res
@@ -111,12 +124,23 @@ router.get("/user/refreshToken", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/user/getAll", async (req: Request, res: Response) => {
-  try {
-    const response = await userCtrl.getAll();
-    return res.status(response.statusCode).json(response);
-  } catch (error) {
-    unhandleError(error, res);
+UserRouter.get(
+  "/user/getAll",
+  [validateRouteJustForAdmin],
+  async (req: Request, res: Response) => {
+    try {
+      const response = await userCtrl.getAll();
+      return res.status(response.statusCode).json(response);
+    } catch (error) {
+      unhandleError(error, res);
+    }
   }
-});
-export default router;
+);
+
+UserRouter.get(
+  "/user/justForUserTest",
+  [validateRouteJustForUser],
+  async (req: Request, res: Response) => {
+    res.status(200).json("ok");
+  }
+);

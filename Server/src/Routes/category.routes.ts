@@ -7,17 +7,17 @@ import validateCategoryNameNoDuplicate from "../middleware/Category/validateCate
 import { categorySchemas } from "../schema/category.schema";
 import categoryCtrl from "../controller/category.controller";
 
-const router = express.Router();
+export const CategoryRouter = express.Router();
 
-router.post(
+CategoryRouter.post(
   "/category",
   [validateResource(categorySchemas.create), validateCategoryNameNoDuplicate],
   categoryCtrl.addCategoryHandler
 );
 
-router.get("/category", categoryCtrl.getAllCategoryHandler);
+CategoryRouter.get("/category", categoryCtrl.getAllCategoryHandler);
 
-router.put(
+CategoryRouter.put(
   "/category/:id",
   [
     validateResource(categorySchemas.update),
@@ -27,7 +27,7 @@ router.put(
   categoryCtrl.updateCategoryHandler
 );
 
-router.delete(
+CategoryRouter.delete(
   "/category/:id",
   [
     validateResource(categorySchemas.delete),
@@ -36,5 +36,3 @@ router.delete(
   ],
   categoryCtrl.deleteCategoryHandler
 );
-
-export default router;

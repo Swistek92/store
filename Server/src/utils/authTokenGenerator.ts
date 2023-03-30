@@ -11,7 +11,7 @@ const AuthTokenGenerator = {
       expiresIn: "15m",
     };
 
-    return sign(payload, ACTIVE_TOKEN_PRIVATE!, sginOptions);
+    return sign(payload, process.env.ACTIVE_TOKEN_PRIVATE!, sginOptions);
   },
   Access: (payload: object) => {
     return sign(payload, process.env.ACESS_TOKEN_PRIVATE!, {

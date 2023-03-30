@@ -3,7 +3,7 @@ import { SerializeResponse } from "../../utils/http";
 import { Request, Response, NextFunction } from "express";
 import UserService from "../../service/user.service";
 
-const validateUserAccountNoDuplicate = async (
+export const validateUserAccountNoDuplicate = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -29,5 +29,3 @@ const validateUserAccountNoDuplicate = async (
 
   next();
 };
-
-export default validateUserAccountNoDuplicate;
